@@ -143,7 +143,7 @@ class Order {
         System.out.printf("%-21s: %s\n", "Brand Name", car.brand);
         System.out.printf("%-21s: %s\n", "Model", car.model);
         System.out.printf("%-21s: %s\n", "Color", car.color);
-        System.out.printf("%-21s: %s\n", "Capacity" car.capacity);
+        System.out.printf("%-21s: %s\n", "Capacity", car.capacity);
         System.out.printf("%-21s: %s /hr\n", "License Plate Number", car.licensePlateNum);
         System.out.printf("%-21s: %s person\n", "Rental Fee", car.rentFee);
         System.out.println("------------------------------------------------");
@@ -156,7 +156,6 @@ class Order {
         System.out.println("######  Thank you for using FilkomTravel!  #####");
         System.out.println("######    We hope to see you next time!    #####");
         System.out.println("################################################");
-        System.out.println();
     }
 }
 
@@ -164,8 +163,9 @@ class Car {
     protected int rentFee;
     protected String brand;
     protected String model;
+    protected String color;
     protected String licensePlateNum;
-    private int capacity;
+    protected int capacity;
     private boolean includeDriver;
 
     public int getRentFee() {
