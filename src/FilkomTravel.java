@@ -98,12 +98,25 @@ class Order {
 
     public void setRentStartDate(int year, int month, int day, int hour, int minute) {
         // Unfinished
-        this.rentEndDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        LocalDateTime proposedDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        if (proposedDate.isAfter(currentDate)) {
+            this.rentStartDate = proposedDate;
+        } else {
+            System.out.println("Error! The rent start date can't be before current date!");
+        }
     }
 
     public void setRentEndtDate(int year, int month, int day, int hour, int minute) {
         // Unfinished
-        this.rentEndDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        LocalDateTime proposedDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+
+        if (proposedDate.isAfter(this.rentStartDate)) {
+            this.rentStartDate = proposedDate;
+        } else {
+            System.out.println("Error! The rent end date can't be before rent start date!");
+        }
     }
 
     public int calculateTotalCharges() {
@@ -143,11 +156,12 @@ class Order {
 }
 
 class Car {
-    int rentFee;
-    String brand;
-    String model;
-    String licensePlateNum;
+    protected int rentFee;
+    protected String brand;
+    protected String model;
+    protected String licensePlateNum;
     private int capacity;
+    private boolean includeDriver;
 
     public int getRentFee() {
         return this.rentFee;
@@ -165,13 +179,37 @@ class Car {
 }
 
 class SmallCar extends Car {
-    
+    public void isIncludeDriver(boolean includeDriver){
+        if (includeDriver == true) {
+            System.out.println("Driver: Included");
+        } else {
+            System.out.println("Driver: Not included");
+        }
+    }
+
+    public void printCar(){
+        System.out.println("################################################");
+        System.out.println("Brand: "+ super.brand);
+        System.out.println("Model: " + super.model);
+        System.out.println("License Plate: " + super.licensePlateNum);
+        System.out.println("Capacity: " + super.getCapacity() + " persons");
+        System.out.println("------------------------------------------------");
+        System.out.println("Rent Fee: Rp" + getRentFee());
+        System.out.println("Driver: " + isIncludeDriver());
+        System.out.println("################################################");
+    }
 }
 
 class MediumCar extends Car {
-
+    
+    public void printCar(){
+        //unfinished
+    }
 }
 
 class BigCar extends Car {
 
+    public void printCar(){
+        //unfinished
+    }
 }
