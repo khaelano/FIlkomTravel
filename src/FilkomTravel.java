@@ -106,7 +106,7 @@ class Order {
         this.rentEndDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
     }
 
-    public int getTotalCharges() {
+    public int calculateTotalCharges() {
         Duration duration = Duration.between(rentStartDate, rentEndDate);
         int durationInHour = (int) Math.ceil(duration.getSeconds()/3600);
 
@@ -122,7 +122,23 @@ class Order {
         System.out.println("Invoice date: " + invoiceDate.format(formatter));
         System.out.println("Renter Name: " + this.renter.name);
         System.out.println("------------------------------------------------");
-        System.out.println("Rented Car Details:");
+        System.out.println("--------------- Rented Car Details -------------");
+        System.out.printf("%-21s: %s\n", "Brand Name");
+        System.out.printf("%-21s: %s\n", "Model");
+        System.out.printf("%-21s: %s\n", "Color");
+        System.out.printf("%-21s: %s\n", "Capacity");
+        System.out.printf("%-21s: %s /hr\n", "License Plate Number");
+        System.out.printf("%-21s: %s person\n", "Rental Fee");
+        System.out.println("------------------------------------------------");
+        System.out.println("------------------ Rent Details ----------------");
+        System.out.printf("%-20s: %s\n", "Start Date");
+        System.out.printf("%-20s: %s\n", "End Date");
+        System.out.printf("%-20s: %s hour\n", "Duration ()");
+        System.out.printf("%-20s: %s\n", "Total Charges");
+        System.out.println("################################################");
+        System.out.println("######  Thank you for using FilkomTravel!  #####");
+        System.out.println("######    We hope to see you next time!    #####");
+        System.out.println("################################################");
     }
 }
 
