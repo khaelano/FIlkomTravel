@@ -106,7 +106,6 @@ class Order {
         } else {
             System.out.println("Error! The rent start date can't be before current date!");
         }
-        
     }
 
     public void setRentEndtDate(int year, int month, int day, int hour, int minute) {
