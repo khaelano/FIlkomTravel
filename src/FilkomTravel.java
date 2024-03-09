@@ -1,6 +1,6 @@
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class FilkomTravel {
     public static void main(String[] args) throws Exception {
@@ -9,7 +9,7 @@ public class FilkomTravel {
 }
 
 class User {
-    private static int userCounter;
+    protected static int userCounter;
     protected String UID;
     protected String name;
     protected String identityNum;
@@ -24,8 +24,8 @@ class User {
     }
 
     public Order order(Car car) {
+        // Unfinished
         Order order = new Order(this, car);
-        order.
 
         return order;
     }
@@ -44,13 +44,16 @@ class User {
 }
 
 class Member extends User {
-    String username;
-    String password;
-    boolean loggedIn;
-    Order[] orderHistory;
+    private String username;
+    private String password;
+    private boolean loggedIn;
+    private ArrayList<Order> orderHistory;
 
     public Member(String name, String identityNum) {
         super(name, identityNum);
+        this.identityNum = "111" + Integer.toString(userCounter);
+
+        this.orderHistory = new ArrayList<>();
     }
 
     public void setCredentials(String username, String password) {
@@ -74,24 +77,23 @@ class Member extends User {
     public Order order(Car car) {
         Order order = new Order(this, car);
 
-
+        orderHistory.add(order);
         return order;
     }
 }
 
 class Order {
-    private LocalDate invoiceDate;
+    private LocalDateTime invoiceDate;
     User renter;
     Car rentedCar;
-    LocalDateTime rentStartDate;
-    LocalDateTime rentEndDate;
-    private int totalCharges;
+    private LocalDateTime rentStartDate;
+    private LocalDateTime rentEndDate;
 
     public Order(User renter, Car rentedCar) {
         this.renter = renter;
         this.rentedCar = rentedCar;
 
-        this.invoiceDate = LocalDate.now();
+        this.invoiceDate = LocalDateTime.now();
     }
 
     public void setRentStartDate(int year, int month, int day, int hour, int minute) {
@@ -105,30 +107,29 @@ class Order {
     }
 
     public int getTotalCharges() {
+        Duration duration = Duration.between(rentStartDate, rentEndDate);
+        int durationInHour = (int) Math.ceil(duration.getSeconds()/3600);
 
+        return durationInHour * rentedCar.getRentFee();
     }
 
     public void printBill() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+        System.out.println("################################################");
+        System.out.println("########          Payment Bill          ########");
+        System.out.println("################################################");
+        System.out.println("Invoice date: " + invoiceDate.format(formatter));
+        System.out.println("Renter Name: " + this.renter.name);
+        System.out.println("------------------------------------------------");
+        System.out.println("Rented Car Details:");
     }
 }
 
 class Car {
+    private int rentFee;
 
-}
-
-class Date {
-    int day;
-    int month;
-    int year;
-    int hour;
-    int minutes;
-
-    public int calculateDurationInDay() {
-
-    }
-
-    public int calculataDurationInHour() {
+    public int getRentFee() {
 
     }
 }
