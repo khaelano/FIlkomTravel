@@ -128,8 +128,48 @@ class Order {
 
 class Car {
     private int rentFee;
+    private String brand;
+    private String model;
+    private String licensePlateNum;
+    private int capacity;
 
     public int getRentFee() {
+        return this.rentFee;
+    }
 
+    public void setRentFee(int rentFee) {
+        this.rentFee = rentFee;
+    }
+
+    public String getBrand() {
+        return this.brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getModel() {
+        return this.model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getLicensePlateNum() {
+        return this.licensePlateNum;
+    }
+
+    public void setLicensePlateNum(String licensePlateNum) {
+        this.licensePlateNum = licensePlateNum;
+    }
+
+    public int getCapacity() {
+        return this.capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }
