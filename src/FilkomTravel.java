@@ -156,11 +156,12 @@ class Order {
 }
 
 class Car {
-    int rentFee;
-    String brand;
-    String model;
-    String licensePlateNum;
+    protected int rentFee;
+    protected String brand;
+    protected String model;
+    protected String licensePlateNum;
     private int capacity;
+    private boolean includeDriver;
 
     public int getRentFee() {
         return this.rentFee;
@@ -178,13 +179,37 @@ class Car {
 }
 
 class SmallCar extends Car {
-    
+    public void isIncludeDriver(boolean includeDriver){
+        if (includeDriver == true) {
+            System.out.println("Driver: Included");
+        } else {
+            System.out.println("Driver: Not included");
+        }
+    }
+
+    public void printCar(){
+        System.out.println("################################################");
+        System.out.println("Brand: "+ super.brand);
+        System.out.println("Model: " + super.model);
+        System.out.println("License Plate: " + super.licensePlateNum);
+        System.out.println("Capacity: " + super.getCapacity() + " persons");
+        System.out.println("------------------------------------------------");
+        System.out.println("Rent Fee: Rp" + getRentFee());
+        System.out.println("Driver: " + isIncludeDriver());
+        System.out.println("################################################");
+    }
 }
 
 class MediumCar extends Car {
-
+    
+    public void printCar(){
+        //unfinished
+    }
 }
 
 class BigCar extends Car {
 
+    public void printCar(){
+        //unfinished
+    }
 }
