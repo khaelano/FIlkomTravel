@@ -201,6 +201,13 @@ class SmallCar extends Car {
 }
 
 class MediumCar extends Car {
+    public void isIncludeDriver(boolean includeDriver){
+        if (includeDriver == true) {
+            System.out.println("Driver: Included");
+        } else {
+            System.out.println("Driver: Not included");
+        }
+    }
     
     public void printCar(){
         //unfinished
@@ -208,6 +215,13 @@ class MediumCar extends Car {
 }
 
 class BigCar extends Car {
+    public void isIncludeDriver(boolean includeDriver){
+        if (includeDriver == true) {
+            System.out.println("Driver: Included");
+        } else {
+            System.out.println("Driver: Not included");
+        }
+    }
 
     public void printCar(){
         //unfinished
