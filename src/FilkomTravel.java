@@ -119,15 +119,19 @@ class Order {
         }
     }
 
-    public int calculateTotalCharges() {
+    public int calculateDuration() {
         Duration duration = Duration.between(rentStartDate, rentEndDate);
-        int durationInHour = (int) Math.ceil(duration.getSeconds()/3600);
+        return (int) Math.ceil(duration.getSeconds()/3600);
+    }
 
+    public int calculateTotalCharges() {
+        int durationInHour = calculateDuration();
         return durationInHour * rentedCar.getRentFee();
     }
 
     public void printBill() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Car car = this.rentedCar;
 
         System.out.println("################################################");
         System.out.println("########          Payment Bill          ########");
@@ -136,22 +140,23 @@ class Order {
         System.out.println("Renter Name: " + this.renter.name);
         System.out.println("------------------------------------------------");
         System.out.println("--------------- Rented Car Details -------------");
-        System.out.printf("%-21s: %s\n", "Brand Name");
-        System.out.printf("%-21s: %s\n", "Model");
-        System.out.printf("%-21s: %s\n", "Color");
-        System.out.printf("%-21s: %s\n", "Capacity");
-        System.out.printf("%-21s: %s /hr\n", "License Plate Number");
-        System.out.printf("%-21s: %s person\n", "Rental Fee");
+        System.out.printf("%-21s: %s\n", "Brand Name", car.brand);
+        System.out.printf("%-21s: %s\n", "Model", car.model);
+        System.out.printf("%-21s: %s\n", "Color", car.color);
+        System.out.printf("%-21s: %s\n", "Capacity" car.capacity);
+        System.out.printf("%-21s: %s /hr\n", "License Plate Number", car.licensePlateNum);
+        System.out.printf("%-21s: %s person\n", "Rental Fee", car.rentFee);
         System.out.println("------------------------------------------------");
         System.out.println("------------------ Rent Details ----------------");
-        System.out.printf("%-20s: %s\n", "Start Date");
-        System.out.printf("%-20s: %s\n", "End Date");
-        System.out.printf("%-20s: %s hour\n", "Duration ()");
-        System.out.printf("%-20s: %s\n", "Total Charges");
+        System.out.printf("%-20s: %s\n", "Start Date", this.rentStartDate.format(formatter));
+        System.out.printf("%-20s: %s\n", "End Date", this.rentEndDate.format(formatter));
+        System.out.printf("%-20s: %s hour\n", "Duration", Integer.toString(calculateDuration()));
+        System.out.printf("%-20s: %s\n", "Total Charges", Integer.toString(calculateTotalCharges()));
         System.out.println("################################################");
         System.out.println("######  Thank you for using FilkomTravel!  #####");
         System.out.println("######    We hope to see you next time!    #####");
         System.out.println("################################################");
+        System.out.println();
     }
 }
 
