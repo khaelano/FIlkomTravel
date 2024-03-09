@@ -98,12 +98,26 @@ class Order {
 
     public void setRentStartDate(int year, int month, int day, int hour, int minute) {
         // Unfinished
-        this.rentEndDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        LocalDateTime proposedDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        if (proposedDate.isAfter(currentDate)) {
+            this.rentStartDate = proposedDate;
+        } else {
+            System.out.println("Error! The rent start date can't be before current date!");
+        }
+        
     }
 
     public void setRentEndtDate(int year, int month, int day, int hour, int minute) {
         // Unfinished
-        this.rentEndDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        LocalDateTime proposedDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+
+        if (proposedDate.isAfter(this.rentStartDate)) {
+            this.rentStartDate = proposedDate;
+        } else {
+            System.out.println("Error! The rent end date can't be before rent start date!");
+        }
     }
 
     public int calculateTotalCharges() {
