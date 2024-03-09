@@ -156,9 +156,35 @@ class Order {
 }
 
 class Car {
-    private int rentFee;
+    int rentFee;
+    String brand;
+    String model;
+    String licensePlateNum;
+    private int capacity;
 
     public int getRentFee() {
-
+        return this.rentFee;
     }
+
+    public int getCapacity() {
+        return this.capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+
+}
+
+class SmallCar extends Car {
+    
+}
+
+class MediumCar extends Car {
+
+}
+
+class BigCar extends Car {
+
 }
