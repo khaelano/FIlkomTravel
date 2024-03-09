@@ -1,3 +1,7 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 public class FilkomTravel {
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
@@ -19,8 +23,11 @@ class User {
         userCounter++;
     }
 
-    public Order order(car: Car) {
+    public Order order(Car car) {
+        Order order = new Order(this, car);
+        order.
 
+        return order;
     }
 
     public String getUID() {
@@ -31,13 +38,12 @@ class User {
         return this.name;
     }
 
-    public String getIdentityNumber() {
+    public String getIdentityNum() {
         return this.identityNum;
     }
 }
 
 class Member extends User {
-    private static int userCounter;
     String username;
     String password;
     boolean loggedIn;
@@ -45,7 +51,6 @@ class Member extends User {
 
     public Member(String name, String identityNum) {
         super(name, identityNum);
-        userCounter++;
     }
 
     public void setCredentials(String username, String password) {
@@ -64,12 +69,66 @@ class Member extends User {
     public void logout() {
         this.loggedIn = false;
     }
+
+    @Override
+    public Order order(Car car) {
+        Order order = new Order(this, car);
+
+
+        return order;
+    }
 }
 
 class Order {
+    private LocalDate invoiceDate;
+    User renter;
+    Car rentedCar;
+    LocalDateTime rentStartDate;
+    LocalDateTime rentEndDate;
+    private int totalCharges;
 
+    public Order(User renter, Car rentedCar) {
+        this.renter = renter;
+        this.rentedCar = rentedCar;
+
+        this.invoiceDate = LocalDate.now();
+    }
+
+    public void setRentStartDate(int year, int month, int day, int hour, int minute) {
+        // Unfinished
+        this.rentEndDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+    }
+
+    public void setRentEndtDate(int year, int month, int day, int hour, int minute) {
+        // Unfinished
+        this.rentEndDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+    }
+
+    public int getTotalCharges() {
+
+    }
+
+    public void printBill() {
+
+    }
 }
 
 class Car {
 
+}
+
+class Date {
+    int day;
+    int month;
+    int year;
+    int hour;
+    int minutes;
+
+    public int calculateDurationInDay() {
+
+    }
+
+    public int calculataDurationInHour() {
+
+    }
 }
