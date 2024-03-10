@@ -8,6 +8,12 @@ public class FilkomTravel {
     private static Scanner S;
 
     public static void main(String[] args) throws Exception {
+        System.out.println("################################################");
+        initSmallCar();
+        System.out.println("################################################");
+        initMedCar();
+        System.out.println("################################################");
+        initLargeCar();
         memberDB = new ArrayList<>();
         S = new Scanner(System.in);
 
@@ -439,10 +445,10 @@ class Car {
         this.capacity = capacity;
     }
 
-    public boolean isIncludeDriver(boolean includeDriver) {
+    public void isIncludeDriver(boolean includeDriver) {
         this.includeDriver = includeDriver;
-        return this.includeDriver;
     }
+    
 
     public void setCarUniqueCode(int carUniqueCode){
         this.carUniqueCode = carUniqueCode;
@@ -461,7 +467,7 @@ class SmallCar extends Car {
     }
     
     void carCapacity(){
-        if (isIncludeDriver(true)) {
+        if (this.includeDriver == true) {
             capacity -= 1;
         } else {
             capacity = capacity;
@@ -473,14 +479,14 @@ class SmallCar extends Car {
         System.out.println("Brand: "+ brand);
         System.out.println("Model: " + model);
         System.out.println("License Plate: " + licensePlateNum);
-        System.out.println("Capacity: " + getCapacity() + " persons");
         System.out.println();
         System.out.println("Rent Fee: Rp" + getRentFee());
-        if (isIncludeDriver(true)) {
+        if (this.includeDriver == true) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
+        System.out.println("Capacity: " + getCapacity() + " persons");
         System.out.println("------------------------------------------------");
         System.out.println("Car Unique Code: "+getCarUniqueCode());
         System.out.println("################################################");
@@ -495,7 +501,7 @@ class MediumCar extends Car {
     }
     
     void carCapacity(){
-        if (isIncludeDriver(true)) {
+        if (this.includeDriver == true) {
             capacity -= 1;
         } else {
             capacity = capacity;
@@ -506,14 +512,14 @@ class MediumCar extends Car {
         System.out.println("Brand: "+ brand);
         System.out.println("Model: " + model);
         System.out.println("License Plate: " + licensePlateNum);
-        System.out.println("Capacity: " + getCapacity() + " persons");
         System.out.println();
         System.out.println("Rent Fee: Rp" + getRentFee());
-        if (isIncludeDriver(true)) {
+        if (this.includeDriver == true) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
+        System.out.println("Capacity: " + getCapacity() + " persons");
         System.out.println("------------------------------------------------");
         System.out.println("Car Unique Code: "+getCarUniqueCode());
         System.out.println("################################################");
@@ -528,7 +534,7 @@ class LargeCar extends Car {
     }
     
     void carCapacity(){
-        if (isIncludeDriver(true)) {
+        if (this.includeDriver == true) {
             capacity -= 1;
         } else {
             capacity = capacity;
@@ -540,14 +546,14 @@ class LargeCar extends Car {
         System.out.println("Brand: "+ brand);
         System.out.println("Model: " + model);
         System.out.println("License Plate: " + licensePlateNum);
-        System.out.println("Capacity: " + getCapacity() + " persons");
         System.out.println();
         System.out.println("Rent Fee: Rp" + getRentFee());
-        if (isIncludeDriver(true)) {
+        if (this.includeDriver == true) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
+        System.out.println("Capacity: " + getCapacity() + " persons");
         System.out.println("------------------------------------------------");
         System.out.println("Car Unique Code: "+getCarUniqueCode());
         System.out.println("################################################");
