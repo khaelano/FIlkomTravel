@@ -165,8 +165,8 @@ class Car {
     protected String brand;
     protected String model;
     protected String licensePlateNum;
-    private int capacity;
-    private boolean includeDriver;
+    protected int capacity;
+    protected boolean includeDriver;
 
     public int getRentFee() {
         return this.rentFee;
@@ -180,18 +180,60 @@ class Car {
         this.capacity = capacity;
     }
 
-
+    public boolean isIncludeDriver(boolean includeDriver) {
+        this.includeDriver = includeDriver;
+        return this.includeDriver;
+    }
 }
 
 class SmallCar extends Car {
-    public void isIncludeDriver(boolean includeDriver){
-        if (includeDriver == true) {
+    final private double RENTAL_PRICE_PER_6_HOURS = 40_000;
+    SmallCar(){
+        super();
+        setCapacity(5);
+    }
+    
+    void carCapacity(){
+        if (isIncludeDriver(true)) {
+            capacity -= 1;
+        } else {
+            capacity = capacity;
+        }
+    }
+
+    //bikin method if (member) dapet diskon 
+
+    public void printCar(){
+        System.out.println("################################################");
+        System.out.println("Brand: "+ brand);
+        System.out.println("Model: " + model);
+        System.out.println("License Plate: " + licensePlateNum);
+        System.out.println("Capacity: " + getCapacity() + " persons");
+        System.out.println("------------------------------------------------");
+        System.out.println("Rent Fee: Rp" + getRentFee());
+        if (isIncludeDriver(true)) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
+        System.out.println("################################################");
     }
+}
 
+class MediumCar extends Car {
+    final private double RENTAL_PRICE_PER_6_HOURS = 80_000;
+    MediumCar(){
+        super();
+        setCapacity(8);
+    }
+    
+    void carCapacity(){
+        if (isIncludeDriver(true)) {
+            capacity -= 1;
+        } else {
+            capacity = capacity;
+        }
+    }
     public void printCar(){
         System.out.println("################################################");
         System.out.println("Brand: "+ super.brand);
@@ -200,35 +242,42 @@ class SmallCar extends Car {
         System.out.println("Capacity: " + super.getCapacity() + " persons");
         System.out.println("------------------------------------------------");
         System.out.println("Rent Fee: Rp" + getRentFee());
-        System.out.println("Driver: " + isIncludeDriver());
+        if (isIncludeDriver(true)) {
+            System.out.println("Driver: Included");
+        } else {
+            System.out.println("Driver: Not included");
+        }
         System.out.println("################################################");
     }
 }
 
-class MediumCar extends Car {
-    public void isIncludeDriver(boolean includeDriver){
-        if (includeDriver == true) {
-            System.out.println("Driver: Included");
-        } else {
-            System.out.println("Driver: Not included");
-        }
+class BigCar extends Car {
+    final private double RENTAL_PRICE_PER_6_HOURS = 120_000;
+    BigCar(){
+        super();
+        setCapacity(16);
     }
     
-    public void printCar(){
-        //unfinished
+    void carCapacity(){
+        if (isIncludeDriver(true)) {
+            capacity -= 1;
+        } else {
+            capacity = capacity;
+        }
     }
-}
-
-class BigCar extends Car {
-    public void isIncludeDriver(boolean includeDriver){
-        if (includeDriver == true) {
+    public void printCar(){
+        System.out.println("################################################");
+        System.out.println("Brand: "+ super.brand);
+        System.out.println("Model: " + super.model);
+        System.out.println("License Plate: " + super.licensePlateNum);
+        System.out.println("Capacity: " + super.getCapacity() + " persons");
+        System.out.println("------------------------------------------------");
+        System.out.println("Rent Fee: Rp" + getRentFee());
+        if (isIncludeDriver(true)) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
-    }
-
-    public void printCar(){
-        //unfinished
+        System.out.println("################################################");
     }
 }
