@@ -166,6 +166,84 @@ public class FilkomTravel {
 
         return member;
     }
+
+    private static void initSmallCar(){
+        SmallCar sc1 = new SmallCar();
+        sc1.brand = "Honda";
+        sc1.model = "Brio";
+        sc1.licensePlateNum = "A 54 HEL";
+        sc1.isIncludeDriver(false);
+        sc1.carCapacity();
+        sc1.getRentFee();
+        sc1.setCarUniqueCode(433);
+        sc1.printCar();
+
+        SmallCar sc2 = new SmallCar();
+        sc2.brand = "Daihatsu";
+        sc2.model = "Ayla";
+        sc2.licensePlateNum = "M 43 NG";
+        sc2.isIncludeDriver(true);
+        sc2.carCapacity();
+        sc2.getRentFee();
+        sc2.setCarUniqueCode(333);
+        sc2.printCar();
+        
+    }
+
+    private static void initMedCar(){
+        MediumCar mc1 = new MediumCar();
+        mc1.brand = "Toyota";
+        mc1.model = "Avanza";
+        mc1.licensePlateNum = "N 941 AM";
+        mc1.isIncludeDriver(true);
+        mc1.carCapacity();
+        mc1.getRentFee();
+        mc1.setCarUniqueCode(999);
+        mc1.printCar();
+        
+        MediumCar mc2 = new MediumCar();
+        mc2.brand = "Honda";
+        mc2.model = "BRV";
+        mc2.licensePlateNum = "N 4 KAM";
+        mc2.isIncludeDriver(false);
+        mc2.carCapacity();
+        mc2.getRentFee();
+        mc2.setCarUniqueCode(215);
+        mc2.printCar();
+        
+        MediumCar mc3 = new MediumCar();
+        mc3.brand = "Daihatsu";
+        mc3.model = "Sigra";
+        mc3.licensePlateNum = "N 45 GOR";
+        mc3.isIncludeDriver(true);
+        mc3.carCapacity();
+        mc3.getRentFee();
+        mc3.setCarUniqueCode(468);
+        mc3.printCar();
+    }
+
+    private static void initLargeCar(){
+        LargeCar lc1 = new LargeCar();
+        lc1.brand = "Toyota";
+        lc1.model = "HiAce";
+        lc1.licensePlateNum = "B 490 NG";
+        lc1.isIncludeDriver(true);
+        lc1.carCapacity();
+        lc1.getRentFee();
+        lc1.setCarUniqueCode(222);
+        lc1.printCar();
+        
+        LargeCar lc2 = new LargeCar();
+        lc2.brand = "Isuzu";
+        lc2.model = "Elf Microbus";
+        lc2.licensePlateNum = "B 444 AA";
+        lc2.isIncludeDriver(false);
+        lc2.carCapacity();
+        lc2.getRentFee();
+        lc2.setCarUniqueCode(122);
+        lc2.printCar();
+    }
+
 }
 
 class User {
@@ -347,6 +425,7 @@ class Car {
     protected String licensePlateNum;
     protected int capacity;
     protected boolean includeDriver;
+    protected int carUniqueCode;
 
     public int getRentFee() {
         return this.rentFee;
@@ -356,13 +435,21 @@ class Car {
         return this.capacity;
     }
 
-    public void setCapacity(int capacity) {
+    protected void setCapacity(int capacity) {
         this.capacity = capacity;
     }
 
     public boolean isIncludeDriver(boolean includeDriver) {
         this.includeDriver = includeDriver;
         return this.includeDriver;
+    }
+
+    public void setCarUniqueCode(int carUniqueCode){
+        this.carUniqueCode = carUniqueCode;
+    }
+
+    public int getCarUniqueCode(){
+        return this.carUniqueCode;
     }
 }
 
@@ -381,21 +468,21 @@ class SmallCar extends Car {
         }
     }
 
-    //bikin method if (member) dapet diskon 
-
     public void printCar(){
         System.out.println("################################################");
         System.out.println("Brand: "+ brand);
         System.out.println("Model: " + model);
         System.out.println("License Plate: " + licensePlateNum);
         System.out.println("Capacity: " + getCapacity() + " persons");
-        System.out.println("------------------------------------------------");
+        System.out.println();
         System.out.println("Rent Fee: Rp" + getRentFee());
         if (isIncludeDriver(true)) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
+        System.out.println("------------------------------------------------");
+        System.out.println("Car Unique Code: "+getCarUniqueCode());
         System.out.println("################################################");
     }
 }
@@ -416,17 +503,19 @@ class MediumCar extends Car {
     }
     public void printCar(){
         System.out.println("################################################");
-        System.out.println("Brand: "+ super.brand);
-        System.out.println("Model: " + super.model);
-        System.out.println("License Plate: " + super.licensePlateNum);
-        System.out.println("Capacity: " + super.getCapacity() + " persons");
-        System.out.println("------------------------------------------------");
+        System.out.println("Brand: "+ brand);
+        System.out.println("Model: " + model);
+        System.out.println("License Plate: " + licensePlateNum);
+        System.out.println("Capacity: " + getCapacity() + " persons");
+        System.out.println();
         System.out.println("Rent Fee: Rp" + getRentFee());
         if (isIncludeDriver(true)) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
+        System.out.println("------------------------------------------------");
+        System.out.println("Car Unique Code: "+getCarUniqueCode());
         System.out.println("################################################");
     }
 }
@@ -444,22 +533,23 @@ class LargeCar extends Car {
         } else {
             capacity = capacity;
         }
-
     }
+
     public void printCar(){
         System.out.println("################################################");
-        System.out.println("Brand: "+ super.brand);
-        System.out.println("Model: " + super.model);
-        System.out.println("License Plate: " + super.licensePlateNum);
-        System.out.println("Capacity: " + super.getCapacity() + " persons");
-        System.out.println("------------------------------------------------");
+        System.out.println("Brand: "+ brand);
+        System.out.println("Model: " + model);
+        System.out.println("License Plate: " + licensePlateNum);
+        System.out.println("Capacity: " + getCapacity() + " persons");
+        System.out.println();
         System.out.println("Rent Fee: Rp" + getRentFee());
         if (isIncludeDriver(true)) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
-
+        System.out.println("------------------------------------------------");
+        System.out.println("Car Unique Code: "+getCarUniqueCode());
         System.out.println("################################################");
     }
 }
