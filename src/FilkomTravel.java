@@ -28,8 +28,8 @@ public class FilkomTravel {
                     guestMode();
                     break;
                 default:
-                    System.out.println("Please select a valid choice");
-                    break;
+                    System.out.println("Please input a valid value");
+                    return;
             }
         }
     }
@@ -38,7 +38,6 @@ public class FilkomTravel {
         System.out.println("-------------------------------------------------------------------------------------");
         System.out.println("|                                     Order Mode                                    |");
         System.out.println("-------------------------------------------------------------------------------------");
-        System.out.println("----------------------------- List of all available cars ----------------------------");
 
         // Print all available cars .....
         printCars();
@@ -76,7 +75,6 @@ public class FilkomTravel {
     private static void memberMode() {
         System.out.print("Have you registered as a member? [y/n] ");
         String selection = S.nextLine();
-        Order order;
         Member member;
 
         switch (selection) {
@@ -91,8 +89,31 @@ public class FilkomTravel {
             default:
                 System.out.println("Please input a valid value");
                 member = null;
-                break;
+                return;
         }
+
+        System.out.println("Please Select the Menu:");
+        System.out.println("0. Rent a Car");
+        System.out.println("1. Print Order History");
+        System.out.print("Selection [0-1] ");
+        selection = S.nextLine();
+
+        switch (selection) {
+            case "1":
+                Order order = takeOrder(member);
+                order.printBill();
+                break;
+        
+            case "2":
+                member.printHistory();
+                break;
+
+            default:
+                System.out.println("Please input a valid value");
+                return;
+        }
+
+        member.logout();
     }
 
     private static Member memberLogin() {
@@ -103,7 +124,7 @@ public class FilkomTravel {
         Member member = memberDB.get(username);
 
         member.login(username, password);
-        System.out.println("Login Successful!");
+        System.out.println();
 
         return member;
     }
@@ -146,8 +167,11 @@ public class FilkomTravel {
 
         System.out.print("Enter your password: ");
         String password = S.nextLine();
+
+        System.out.println("Registration Successful!");
         System.out.println();
 
+        member.login(null, null);
         member.setCredentials(username, password);
         memberDB.put(username, member);
 
@@ -240,6 +264,7 @@ public class FilkomTravel {
     }
 
     private static void printCars() {
+        System.out.println("----------------------------- List of all available cars ----------------------------");
         System.out.printf("| %-2s | %-10s | %-12s | %-13s | %-12s | %-6s | %-8s |\n", "N.", "Brand", "Model", "License Plate", "Rent Fee", "Color", "Capacity");
         System.out.println("-------------------------------------------------------------------------------------");
         
@@ -259,6 +284,7 @@ public class FilkomTravel {
         System.out.println("-------------------------------------------------------------------------------------");
 
     }
+
 }
 
 class User {
@@ -308,6 +334,7 @@ class Member extends User {
         super(name, identityNum);
         this.identityNum = "111" + Integer.toString(userCounter);
         this.discount = 0.1;
+        this.loggedIn = false;
 
         this.orderHistory = new ArrayList<>();
     }
@@ -325,9 +352,12 @@ class Member extends User {
     }
 
     public void login(String username, String password) {
-        if (!(username.equals(this.username) && password.equals(this.password)))
+        if (!(username.equals(this.username) && password.equals(this.password))) {
+            System.out.println("Login Failed!");
             return;
-
+        }
+        
+        System.out.println("Logged In!");
         this.loggedIn = true;
     }
 
@@ -342,6 +372,25 @@ class Member extends User {
         orderHistory.add(order);
         return order;
     }
+
+    public void printHistory() {
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------- Order History -------------------------------------");
+        System.out.printf("| %-16s | %-16s | %-16s | %-8s | %-13s |\n", "Invoice Date", "Start Date", "End Date", "Duration", "Net. Charges");
+
+        for (Order order : orderHistory) {
+            System.out.printf("| %-16s | %-16s | %-16s | %-5s hr | Rp. %-9s |\n", 
+                order.getInvoiceDate(),
+                order.getRentStartDate(), 
+                order.getRentEndDate(), 
+                order.calculateDuration(),
+                order.calculateTotalCharges()
+            );
+        }
+
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println();
+    }
 }
 
 class Order {
@@ -350,6 +399,7 @@ class Order {
     Car rentedCar;
     private LocalDateTime rentStartDate;
     private LocalDateTime rentEndDate;
+
     public Order(User renter, Car rentedCar) {
         this.renter = renter;
         this.rentedCar = rentedCar;
@@ -382,6 +432,21 @@ class Order {
         }
     }
 
+    public String getRentStartDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return this.rentStartDate.format(formatter);
+    }
+    
+    public String getRentEndDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return this.rentEndDate.format(formatter);
+    }
+
+    public String getInvoiceDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return this.invoiceDate.format(formatter);
+    }
+
     public int calculateDuration() {
         Duration duration = Duration.between(rentStartDate, rentEndDate);
         return (int) Math.ceil(duration.getSeconds() / 3600);
@@ -393,13 +458,12 @@ class Order {
     }
 
     public void printBill() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         Car car = this.rentedCar;
 
         System.out.println("################################################");
         System.out.println("########          Payment Bill          ########");
         System.out.println("################################################");
-        System.out.println("Invoice date: " + invoiceDate.format(formatter));
+        System.out.println("Invoice date: " + getInvoiceDate());
         System.out.println("Renter Name: " + this.renter.name);
         System.out.println("------------------------------------------------");
         System.out.println("--------------- Rented Car Details -------------");
@@ -412,10 +476,11 @@ class Order {
         System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.rentFee);
         System.out.println("------------------------------------------------");
         System.out.println("------------------ Rent Details ----------------");
-        System.out.printf("%-20s: %s\n", "Start Date", this.rentStartDate.format(formatter));
-        System.out.printf("%-20s: %s\n", "End Date", this.rentEndDate.format(formatter));
+        System.out.printf("%-20s: %s\n", "Start Date", getRentStartDate());
+        System.out.printf("%-20s: %s\n", "End Date", getRentEndDate());
         System.out.printf("%-20s: %s hour\n", "Duration", Integer.toString(calculateDuration()));
-        System.out.printf("%-20s: Rp. %s\n", "Total Charges", Integer.toString(calculateTotalCharges()));
+        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.getRentFee() * Math.ceil(calculateDuration()/6)));
+        System.out.printf("%-30s: Rp. %s\n", "Total Charges (after discount)", Integer.toString(calculateTotalCharges()));
         System.out.println("################################################");
         System.out.println("######  Thank you for using FilkomTravel!  #####");
         System.out.println("######    We hope to see you next time!    #####");
