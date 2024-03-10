@@ -173,7 +173,7 @@ class User {
     protected String UID;
     protected String name;
     protected String identityNum;
-    final double DISCOUNT = 0;
+    protected double discount;
     String phoneNum;
     String address;
 
@@ -181,6 +181,7 @@ class User {
         this.name = name;
         this.identityNum = identityNum;
         this.UID = "101" + Integer.toString(userCounter);
+        this.discount = 0;
         userCounter++;
     }
 
@@ -209,11 +210,11 @@ class Member extends User {
     private String password;
     private boolean loggedIn;
     private ArrayList<Order> orderHistory;
-    final double DISCOUNT = 0.25;
 
     public Member(String name, String identityNum) {
         super(name, identityNum);
         this.identityNum = "111" + Integer.toString(userCounter);
+        this.discount = 0.1;
 
         this.orderHistory = new ArrayList<>();
     }
@@ -256,7 +257,6 @@ class Order {
     Car rentedCar;
     private LocalDateTime rentStartDate;
     private LocalDateTime rentEndDate;
-    final private static double DISCOUNT_RATE = 0.05;
     public Order(User renter, Car rentedCar) {
         this.renter = renter;
         this.rentedCar = rentedCar;
@@ -296,7 +296,7 @@ class Order {
 
     public int calculateTotalCharges() {
         int durationInHour = calculateDuration();
-        return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentFee() * (1 - this.renter.DISCOUNT));
+        return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentFee() * (1 - this.renter.discount));
     }
 
     public void printBill() {
@@ -371,8 +371,6 @@ class SmallCar extends Car {
             capacity = capacity;
         }
     }
-
-    // bikin method if (member) dapet diskon
 
     public void printCar() {
         System.out.println("################################################");
