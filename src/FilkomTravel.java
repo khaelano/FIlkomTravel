@@ -20,7 +20,7 @@ public class FilkomTravel {
                 case "y":
                     memberMode();
                     break;
-            
+
                 case "n":
                     guestMode();
                     break;
@@ -45,7 +45,7 @@ public class FilkomTravel {
         System.out.print("Enter car license plate: ");
         String licensePlate = S.nextLine();
         System.out.println();
-        
+
         Car car;
         switch (carType) {
             case "small":
@@ -55,7 +55,7 @@ public class FilkomTravel {
                 car.licensePlateNum = licensePlate;
                 car.color = color;
                 break;
-        
+
             case "medium":
                 car = new MediumCar();
                 car.brand = brand;
@@ -63,7 +63,7 @@ public class FilkomTravel {
                 car.licensePlateNum = licensePlate;
                 car.color = color;
                 break;
-        
+
             case "large":
                 car = new LargeCar();
                 car.brand = brand;
@@ -71,7 +71,7 @@ public class FilkomTravel {
                 car.licensePlateNum = licensePlate;
                 car.color = color;
                 break;
-        
+
             default:
                 System.out.println("Please selec a valid input");
                 car = null;
@@ -80,14 +80,14 @@ public class FilkomTravel {
 
         return car;
     }
-    
+
     private static void guestMode() {
         // Unfinished
         User guest = guestRegistration();
         Car car = generateCar();
 
-        Order order  = guest.order(car);
-        
+        Order order = guest.order(car);
+
         System.out.println("Set rent start date and time in this format: ");
         System.out.print("dd/MM/yyyy HH:mm ");
         order.setRentStartDate(S.nextLine());
@@ -113,7 +113,7 @@ public class FilkomTravel {
 
         System.out.print("Enter your password: ");
         String password = S.nextLine();
-        
+
         // Member member = memberDB.;
     }
 
@@ -124,9 +124,9 @@ public class FilkomTravel {
 
         System.out.print("Enter your identity number: ");
         String identityNum = S.nextLine();
-        
+
         User guest = new User(name, identityNum);
-        
+
         System.out.print("Enter your phone number: ");
         guest.phoneNum = S.nextLine();
 
@@ -144,9 +144,9 @@ public class FilkomTravel {
 
         System.out.print("Enter your identity number: ");
         String identityNum = S.nextLine();
-        
+
         Member member = new Member(name, identityNum);
-        
+
         System.out.print("Enter your phone number: ");
         member.phoneNum = S.nextLine();
 
@@ -173,6 +173,7 @@ class User {
     protected String UID;
     protected String name;
     protected String identityNum;
+    final double DISCOUNT = 0;
     String phoneNum;
     String address;
 
@@ -208,6 +209,7 @@ class Member extends User {
     private String password;
     private boolean loggedIn;
     private ArrayList<Order> orderHistory;
+    final double DISCOUNT = 0.25;
 
     public Member(String name, String identityNum) {
         super(name, identityNum);
@@ -217,18 +219,20 @@ class Member extends User {
     }
 
     public void setCredentials(String username, String password) {
-        if (!loggedIn) return;
+        if (!loggedIn)
+            return;
 
         this.username = username;
         this.password = password;
-    } 
+    }
 
     public String getUsername() {
         return this.username;
     }
 
     public void login(String username, String password) {
-        if (!(username.equals(this.username) && password.equals(this.password))) return;
+        if (!(username.equals(this.username) && password.equals(this.password)))
+            return;
 
         this.loggedIn = true;
     }
@@ -287,12 +291,12 @@ class Order {
 
     public int calculateDuration() {
         Duration duration = Duration.between(rentStartDate, rentEndDate);
-        return (int) Math.ceil(duration.getSeconds()/3600);
+        return (int) Math.ceil(duration.getSeconds() / 3600);
     }
 
     public int calculateTotalCharges() {
         int durationInHour = calculateDuration();
-        return durationInHour * rentedCar.getRentFee();
+        return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentFee() * (1 - this.renter.DISCOUNT));
     }
 
     public void printBill() {
@@ -355,12 +359,13 @@ class Car {
 
 class SmallCar extends Car {
     final private double RENTAL_PRICE_PER_6_HOURS = 40_000;
-    SmallCar(){
+
+    SmallCar() {
         super();
         setCapacity(5);
     }
-    
-    void carCapacity(){
+
+    void carCapacity() {
         if (isIncludeDriver(true)) {
             capacity -= 1;
         } else {
@@ -368,11 +373,11 @@ class SmallCar extends Car {
         }
     }
 
-    //bikin method if (member) dapet diskon 
+    // bikin method if (member) dapet diskon
 
-    public void printCar(){
+    public void printCar() {
         System.out.println("################################################");
-        System.out.println("Brand: "+ brand);
+        System.out.println("Brand: " + brand);
         System.out.println("Model: " + model);
         System.out.println("License Plate: " + licensePlateNum);
         System.out.println("Capacity: " + getCapacity() + " persons");
@@ -389,21 +394,23 @@ class SmallCar extends Car {
 
 class MediumCar extends Car {
     final private double RENTAL_PRICE_PER_6_HOURS = 80_000;
-    MediumCar(){
+
+    MediumCar() {
         super();
         setCapacity(8);
     }
-    
-    void carCapacity(){
+
+    void carCapacity() {
         if (isIncludeDriver(true)) {
             capacity -= 1;
         } else {
             capacity = capacity;
         }
     }
-    public void printCar(){
+
+    public void printCar() {
         System.out.println("################################################");
-        System.out.println("Brand: "+ super.brand);
+        System.out.println("Brand: " + super.brand);
         System.out.println("Model: " + super.model);
         System.out.println("License Plate: " + super.licensePlateNum);
         System.out.println("Capacity: " + super.getCapacity() + " persons");
@@ -420,12 +427,13 @@ class MediumCar extends Car {
 
 class LargeCar extends Car {
     final private double RENTAL_PRICE_PER_6_HOURS = 120_000;
-    LargeCar(){
+
+    LargeCar() {
         super();
         setCapacity(16);
     }
-    
-    void carCapacity(){
+
+    void carCapacity() {
         if (isIncludeDriver(true)) {
             capacity -= 1;
         } else {
@@ -433,9 +441,10 @@ class LargeCar extends Car {
         }
 
     }
-    public void printCar(){
+
+    public void printCar() {
         System.out.println("################################################");
-        System.out.println("Brand: "+ super.brand);
+        System.out.println("Brand: " + super.brand);
         System.out.println("Model: " + super.model);
         System.out.println("License Plate: " + super.licensePlateNum);
         System.out.println("Capacity: " + super.getCapacity() + " persons");
