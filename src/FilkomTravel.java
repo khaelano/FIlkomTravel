@@ -354,7 +354,7 @@ class Member extends User {
     public void login(String username, String password) {
         if (!(username.equals(this.username) && password.equals(this.password))) {
             System.out.println("Login Failed!");
-            return;
+            throw new RuntimeException("Fatal: Incorrect Credentials!");
         }
         
         System.out.println("Logged In!");
