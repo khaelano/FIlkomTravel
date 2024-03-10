@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class FilkomTravel {
-    private ArrayList<Member> memberDB = new ArrayList<Member>();
+    private static ArrayList<Member> memberDB;
+    private static Scanner S;
 
     public static void main(String[] args) throws Exception {
-        Scanner S = new Scanner(System.in);
+        memberDB = new ArrayList<>();
+        S = new Scanner(System.in);
 
         while (true) {
             System.out.println("Welcome to Filkom Travel!!");
@@ -16,35 +18,87 @@ public class FilkomTravel {
 
             switch (selection) {
                 case "y":
-                    memberRegistration();
+                    memberMode();
                     break;
             
                 case "n":
-                    guestRegistration(S);
+                    guestMode();
                     break;
                 default:
+                    System.out.println("Please select a valid choice");
                     break;
             }
         }
     }
 
-    private void memberLogin(Scanner S) {
-        System.out.print("Have you registered as a member? [y/n] ");
-        String selection = S.nextLine();
+    private static Car generateCar() {
+        System.out.println("What type of car do you want to rent?");
+        System.out.print("[small/medium/large] ");
+        String carType = S.nextLine();
+
+        System.out.print("Enter car brand: ");
+        String brand = S.nextLine();
+        System.out.print("Enter car model: ");
+        String model = S.nextLine();
+        System.out.print("Enter car license plate: ");
+        String licensePlate = S.nextLine();
         
-        switch (selection) {
-            case "n":
-                memberRegistration(S);
+        Car car;
+        switch (carType) {
+            case "small":
+                car = new SmallCar();
+                car.brand = brand;
+                car.model = model;
+                car.licensePlateNum = licensePlate;
                 break;
         
-            case "y":
+            case "medium":
+                car = new MediumCar();
+                car.brand = brand;
+                car.model = model;
+                car.licensePlateNum = licensePlate;
                 break;
+        
+            case "large":
+                car = new LargeCar();
+                car.brand = brand;
+                car.model = model;
+                car.licensePlateNum = licensePlate;
+                break;
+        
             default:
+                System.out.println("Please selec a valid input");
+                car = null;
                 break;
         }
+
+        return car;
+    }
+    
+    private static void guestMode() {
+        User guest = guestRegistration();
+        Car car = generateCar();
+
+        Order order  = guest.order(car);
+        order.printBill();
     }
 
-    private static void guestRegistration(Scanner S) {
+    private static void memberMode() {
+        System.out.print("Have you registered as a member? [y/n] ");
+        String selection = S.nextLine();
+    }
+
+    private static void memberLogin() {
+        System.out.print("Enter your username: ");
+        String username = S.nextLine();
+
+        System.out.print("Enter your password: ");
+        String password = S.nextLine();
+        
+        // Member member = memberDB.;
+    }
+
+    private static User guestRegistration() {
         // Basic user registration
         System.out.print("Enter your name: ");
         String name = S.nextLine();
@@ -59,9 +113,11 @@ public class FilkomTravel {
 
         System.out.print("Enter your home address: ");
         guest.address = S.nextLine();
+
+        return guest;
     }
 
-    private static void memberRegistration(Scanner S) {
+    private static Member memberRegistration() {
         // Basic user registration
         System.out.print("Enter your name: ");
         String name = S.nextLine();
@@ -86,6 +142,8 @@ public class FilkomTravel {
         String password = S.nextLine();
 
         member.setCredentials(username, password);
+
+        return member;
     }
 }
 
@@ -251,7 +309,7 @@ class Car {
     protected String color;
     protected String licensePlateNum;
     protected int capacity;
-    private boolean includeDriver;
+    protected boolean includeDriver;
 
     public int getRentFee() {
         return this.rentFee;
@@ -265,18 +323,60 @@ class Car {
         this.capacity = capacity;
     }
 
-
+    public boolean isIncludeDriver(boolean includeDriver) {
+        this.includeDriver = includeDriver;
+        return this.includeDriver;
+    }
 }
 
 class SmallCar extends Car {
-    public void isIncludeDriver(boolean includeDriver){
-        if (includeDriver == true) {
+    final private double RENTAL_PRICE_PER_6_HOURS = 40_000;
+    SmallCar(){
+        super();
+        setCapacity(5);
+    }
+    
+    void carCapacity(){
+        if (isIncludeDriver(true)) {
+            capacity -= 1;
+        } else {
+            capacity = capacity;
+        }
+    }
+
+    //bikin method if (member) dapet diskon 
+
+    public void printCar(){
+        System.out.println("################################################");
+        System.out.println("Brand: "+ brand);
+        System.out.println("Model: " + model);
+        System.out.println("License Plate: " + licensePlateNum);
+        System.out.println("Capacity: " + getCapacity() + " persons");
+        System.out.println("------------------------------------------------");
+        System.out.println("Rent Fee: Rp" + getRentFee());
+        if (isIncludeDriver(true)) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
+        System.out.println("################################################");
     }
+}
 
+class MediumCar extends Car {
+    final private double RENTAL_PRICE_PER_6_HOURS = 80_000;
+    MediumCar(){
+        super();
+        setCapacity(8);
+    }
+    
+    void carCapacity(){
+        if (isIncludeDriver(true)) {
+            capacity -= 1;
+        } else {
+            capacity = capacity;
+        }
+    }
     public void printCar(){
         System.out.println("################################################");
         System.out.println("Brand: "+ super.brand);
@@ -285,35 +385,42 @@ class SmallCar extends Car {
         System.out.println("Capacity: " + super.getCapacity() + " persons");
         System.out.println("------------------------------------------------");
         System.out.println("Rent Fee: Rp" + getRentFee());
-        System.out.println("Driver: " + isIncludeDriver());
+        if (isIncludeDriver(true)) {
+            System.out.println("Driver: Included");
+        } else {
+            System.out.println("Driver: Not included");
+        }
         System.out.println("################################################");
     }
 }
 
-class MediumCar extends Car {
-    public void isIncludeDriver(boolean includeDriver){
-        if (includeDriver == true) {
-            System.out.println("Driver: Included");
-        } else {
-            System.out.println("Driver: Not included");
-        }
+class LargeCar extends Car {
+    final private double RENTAL_PRICE_PER_6_HOURS = 120_000;
+    LargeCar(){
+        super();
+        setCapacity(16);
     }
     
-    public void printCar(){
-        //unfinished
+    void carCapacity(){
+        if (isIncludeDriver(true)) {
+            capacity -= 1;
+        } else {
+            capacity = capacity;
+        }
     }
-}
-
-class BigCar extends Car {
-    public void isIncludeDriver(boolean includeDriver){
-        if (includeDriver == true) {
+    public void printCar(){
+        System.out.println("################################################");
+        System.out.println("Brand: "+ super.brand);
+        System.out.println("Model: " + super.model);
+        System.out.println("License Plate: " + super.licensePlateNum);
+        System.out.println("Capacity: " + super.getCapacity() + " persons");
+        System.out.println("------------------------------------------------");
+        System.out.println("Rent Fee: Rp" + getRentFee());
+        if (isIncludeDriver(true)) {
             System.out.println("Driver: Included");
         } else {
             System.out.println("Driver: Not included");
         }
-    }
-
-    public void printCar(){
-        //unfinished
+        System.out.println("################################################");
     }
 }
