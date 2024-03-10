@@ -256,7 +256,7 @@ class Order {
     Car rentedCar;
     private LocalDateTime rentStartDate;
     private LocalDateTime rentEndDate;
-
+    final private static double DISCOUNT_RATE = 0.05;
     public Order(User renter, Car rentedCar) {
         this.renter = renter;
         this.rentedCar = rentedCar;
@@ -358,11 +358,10 @@ class Car {
 }
 
 class SmallCar extends Car {
-    final private double RENTAL_PRICE_PER_6_HOURS = 40_000;
-
-    SmallCar() {
+    SmallCar(){
         super();
         setCapacity(5);
+        this.rentFee = 40_000;
     }
 
     void carCapacity() {
@@ -393,11 +392,10 @@ class SmallCar extends Car {
 }
 
 class MediumCar extends Car {
-    final private double RENTAL_PRICE_PER_6_HOURS = 80_000;
-
-    MediumCar() {
+    MediumCar(){
         super();
         setCapacity(8);
+        this.rentFee = 80_000;
     }
 
     void carCapacity() {
@@ -426,11 +424,10 @@ class MediumCar extends Car {
 }
 
 class LargeCar extends Car {
-    final private double RENTAL_PRICE_PER_6_HOURS = 120_000;
-
-    LargeCar() {
+    LargeCar(){
         super();
         setCapacity(16);
+        this.rentFee = 120_000;
     }
 
     void carCapacity() {
