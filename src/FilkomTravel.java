@@ -242,6 +242,18 @@ public class FilkomTravel {
         lc2.getRentFee();
         lc2.setCarUniqueCode(122);
         lc2.printCar();
+
+        Largecar 1c3 = new LargeCar();
+        1c3.brand = "Mercy";
+        1c3.model = "Sprinter";
+        1c3.licensePlateNum = "B 111 GG";
+        lc3.isIncludeDriver(true);
+        lc3.carCapacity();
+        lc3.getRentFee();
+        lc3.setCarUniqueCode(111);
+        lc3.printCar();
+
+        
     }
 
 }
