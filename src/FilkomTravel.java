@@ -11,8 +11,8 @@ public class FilkomTravel {
 
     public static void main(String[] args) throws Exception {
         memberDB = new HashMap<>();
+        carDB = carInitialization();
         S = new Scanner(System.in);
-        carDB = new ArrayList<>();
 
         while (true) {
             System.out.println("Welcome to Filkom Travel!!");
@@ -35,17 +35,21 @@ public class FilkomTravel {
     }
 
     public static Order takeOrder(User user) {
-        System.out.println("------------------------------------------------");
-        System.out.println("|                  Order Mode                  |");
-        System.out.println("------------------------------------------------");
-        
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println("|                                     Order Mode                                    |");
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println("----------------------------- List of all available cars ----------------------------");
+
         // Print all available cars .....
+        printCars();
 
         System.out.printf("Please choose your car [0-%d] : ", carDB.size() - 1);
         Car car = carDB.get(S.nextInt());
         S.nextLine();
+        System.out.print("Do you want to hire a driver? (no additional charges) [y/n] ");
+        car.includeDriver = S.nextLine().equals("y") ? true : false;
 
-        System.out.println("--------- Set rent start and end date ----------");
+        System.out.println("---------------------------- Set rent start and end date ----------------------------");
         System.out.println("The time formatting is [dd/MM/yyyy HH:mm]");
         System.out.println("Example: 29/05/2024 23:15");
         System.out.printf("%-20s: ", "Enter start date");
@@ -59,56 +63,6 @@ public class FilkomTravel {
         order.setRentEndtDate(endDate);
 
         return order;
-    }
-
-    private static Car generateCar() {
-        System.out.println("What type of car do you want to rent?");
-        System.out.print("[small/medium/large] ");
-        String carType = S.nextLine();
-
-        System.out.print("Enter car brand: ");
-        String brand = S.nextLine();
-        System.out.print("Enter car model: ");
-        String model = S.nextLine();
-        System.out.print("Enter the car color: ");
-        String color = S.nextLine();
-        System.out.print("Enter car license plate: ");
-        String licensePlate = S.nextLine();
-        System.out.println();
-
-        Car car;
-        switch (carType) {
-            case "small":
-                car = new SmallCar();
-                car.brand = brand;
-                car.model = model;
-                car.licensePlateNum = licensePlate;
-                car.color = color;
-                break;
-
-            case "medium":
-                car = new MediumCar();
-                car.brand = brand;
-                car.model = model;
-                car.licensePlateNum = licensePlate;
-                car.color = color;
-                break;
-
-            case "large":
-                car = new LargeCar();
-                car.brand = brand;
-                car.model = model;
-                car.licensePlateNum = licensePlate;
-                car.color = color;
-                break;
-
-            default:
-                System.out.println("Please selec a valid input");
-                car = null;
-                break;
-        }
-
-        return car;
     }
 
     private static void guestMode() {
@@ -139,9 +93,6 @@ public class FilkomTravel {
                 member = null;
                 break;
         }
-
-        Car car = generateCar();
-        order = member.order(car);
     }
 
     private static Member memberLogin() {
@@ -203,7 +154,9 @@ public class FilkomTravel {
         return member;
     }
 
-    private static void initSmallCar(){
+    private static ArrayList<Car> carInitialization() {
+        ArrayList<Car> cars = new ArrayList<>();
+        // Small Cars
         SmallCar sc1 = new SmallCar();
         sc1.brand = "Honda";
         sc1.model = "Brio";
@@ -212,8 +165,9 @@ public class FilkomTravel {
         sc1.carCapacity();
         sc1.getRentFee();
         sc1.setCarUniqueCode(433);
-        sc1.printCar();
-
+        sc1.color = "Red";
+        cars.add(sc1);
+    
         SmallCar sc2 = new SmallCar();
         sc2.brand = "Daihatsu";
         sc2.model = "Ayla";
@@ -222,11 +176,10 @@ public class FilkomTravel {
         sc2.carCapacity();
         sc2.getRentFee();
         sc2.setCarUniqueCode(333);
-        sc2.printCar();
+        sc2.color = "Blue";
+        cars.add(sc2);
         
-    }
-
-    private static void initMedCar(){
+        // Medium Cars
         MediumCar mc1 = new MediumCar();
         mc1.brand = "Toyota";
         mc1.model = "Avanza";
@@ -235,7 +188,8 @@ public class FilkomTravel {
         mc1.carCapacity();
         mc1.getRentFee();
         mc1.setCarUniqueCode(999);
-        mc1.printCar();
+        mc1.color = "Silver";
+        cars.add(mc1);
         
         MediumCar mc2 = new MediumCar();
         mc2.brand = "Honda";
@@ -245,7 +199,8 @@ public class FilkomTravel {
         mc2.carCapacity();
         mc2.getRentFee();
         mc2.setCarUniqueCode(215);
-        mc2.printCar();
+        mc2.color = "Black";
+        cars.add(mc2);
         
         MediumCar mc3 = new MediumCar();
         mc3.brand = "Daihatsu";
@@ -255,10 +210,10 @@ public class FilkomTravel {
         mc3.carCapacity();
         mc3.getRentFee();
         mc3.setCarUniqueCode(468);
-        mc3.printCar();
-    }
-
-    private static void initLargeCar(){
+        mc3.color = "Black";
+        cars.add(mc3);
+        
+        // Large Cars
         LargeCar lc1 = new LargeCar();
         lc1.brand = "Toyota";
         lc1.model = "HiAce";
@@ -267,7 +222,8 @@ public class FilkomTravel {
         lc1.carCapacity();
         lc1.getRentFee();
         lc1.setCarUniqueCode(222);
-        lc1.printCar();
+        lc1.color = "White";
+        cars.add(lc1);
         
         LargeCar lc2 = new LargeCar();
         lc2.brand = "Isuzu";
@@ -277,9 +233,32 @@ public class FilkomTravel {
         lc2.carCapacity();
         lc2.getRentFee();
         lc2.setCarUniqueCode(122);
-        lc2.printCar();
+        lc2.color = "White";
+        cars.add(lc2);
+
+        return cars;
     }
 
+    private static void printCars() {
+        System.out.printf("| %-2s | %-10s | %-12s | %-13s | %-12s | %-6s | %-8s |\n", "N.", "Brand", "Model", "License Plate", "Rent Fee", "Color", "Capacity");
+        System.out.println("-------------------------------------------------------------------------------------");
+        
+        for (int i = 0; i < carDB.size(); i++) {
+            Car car = carDB.get(i);
+            System.out.printf(
+                "| %-2d | %-10s | %-12s | %-13s | Rp. %-8s | %-6s | %-8s |\n", 
+                i, 
+                car.brand, 
+                car.model, 
+                car.licensePlateNum, 
+                car.getRentFee(), 
+                car.color, 
+                car.capacity
+            );
+        }
+        System.out.println("-------------------------------------------------------------------------------------");
+
+    }
 }
 
 class User {
@@ -427,15 +406,16 @@ class Order {
         System.out.printf("%-21s: %s\n", "Brand Name", car.brand);
         System.out.printf("%-21s: %s\n", "Model", car.model);
         System.out.printf("%-21s: %s\n", "Color", car.color);
-        System.out.printf("%-21s: %s person\n", "Capacity", car.capacity);
         System.out.printf("%-21s: %s\n", "License Plate Number", car.licensePlateNum);
-        System.out.printf("%-21s: %s /hr\n", "Rental Fee", car.rentFee);
+        System.out.printf("%-21s: %b\n", "include driver?", car.includeDriver);
+        System.out.printf("%-21s: %s person\n", "Capacity", car.capacity);
+        System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.rentFee);
         System.out.println("------------------------------------------------");
         System.out.println("------------------ Rent Details ----------------");
         System.out.printf("%-20s: %s\n", "Start Date", this.rentStartDate.format(formatter));
         System.out.printf("%-20s: %s\n", "End Date", this.rentEndDate.format(formatter));
         System.out.printf("%-20s: %s hour\n", "Duration", Integer.toString(calculateDuration()));
-        System.out.printf("%-20s: %s\n", "Total Charges", Integer.toString(calculateTotalCharges()));
+        System.out.printf("%-20s: Rp. %s\n", "Total Charges", Integer.toString(calculateTotalCharges()));
         System.out.println("################################################");
         System.out.println("######  Thank you for using FilkomTravel!  #####");
         System.out.println("######    We hope to see you next time!    #####");
