@@ -166,6 +166,22 @@ public class FilkomTravel {
 
         return member;
     }
+
+    private static void initSmallCar(){
+        SmallCar sc1 = new SmallCar();
+        sc1.brand = "Honda";
+        sc1.model = "Brio";
+        
+    }
+
+    private static void initMedCar(){
+
+    }
+
+    private static void initLarge(){
+
+    }
+
 }
 
 class User {
@@ -380,8 +396,6 @@ class SmallCar extends Car {
             capacity = capacity;
         }
     }
-
-    //bikin method if (member) dapet diskon 
 
     public void printCar(){
         System.out.println("################################################");
