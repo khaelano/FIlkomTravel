@@ -252,7 +252,7 @@ class Order {
     Car rentedCar;
     private LocalDateTime rentStartDate;
     private LocalDateTime rentEndDate;
-
+    final private static double DISCOUNT_RATE = 0.05;
     public Order(User renter, Car rentedCar) {
         this.renter = renter;
         this.rentedCar = rentedCar;
@@ -293,6 +293,19 @@ class Order {
     public int calculateTotalCharges() {
         int durationInHour = calculateDuration();
         return durationInHour * rentedCar.getRentFee();
+    }
+
+    public int calculateTotalChargesMember(){
+        int durationInHour = calculateDuration();
+        int totalCharges = durationInHour * rentedCar.getRentFee();
+        
+        if (durationInHour >= 12) {
+            double discountAmount = totalCharges * DISCOUNT_RATE;
+            totalCharges -= discountAmount;
+        }
+
+        return totalCharges;
+
     }
 
     public void printBill() {
