@@ -1,10 +1,91 @@
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class FilkomTravel {
+    private ArrayList<Member> memberDB = new ArrayList<Member>();
+
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+        Scanner S = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Welcome to Filkom Travel!!");
+            System.out.print("Do you want to rent as member? [y/n] ");
+            String selection = S.nextLine();
+
+            switch (selection) {
+                case "y":
+                    memberRegistration();
+                    break;
+            
+                case "n":
+                    guestRegistration(S);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void memberLogin(Scanner S) {
+        System.out.print("Have you registered as a member? [y/n] ");
+        String selection = S.nextLine();
+        
+        switch (selection) {
+            case "n":
+                memberRegistration(S);
+                break;
+        
+            case "y":
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static void guestRegistration(Scanner S) {
+        // Basic user registration
+        System.out.print("Enter your name: ");
+        String name = S.nextLine();
+
+        System.out.print("Enter your identity number: ");
+        String identityNum = S.nextLine();
+        
+        User guest = new User(name, identityNum);
+        
+        System.out.print("Enter your phone number: ");
+        guest.phoneNum = S.nextLine();
+
+        System.out.print("Enter your home address: ");
+        guest.address = S.nextLine();
+    }
+
+    private static void memberRegistration(Scanner S) {
+        // Basic user registration
+        System.out.print("Enter your name: ");
+        String name = S.nextLine();
+
+        System.out.print("Enter your identity number: ");
+        String identityNum = S.nextLine();
+        
+        Member member = new Member(name, identityNum);
+        
+        System.out.print("Enter your phone number: ");
+        member.phoneNum = S.nextLine();
+
+        System.out.print("Enter your home address: ");
+        member.address = S.nextLine();
+
+        // Set the user credentials
+        member.login(null, null);
+        System.out.print("Enter your username: ");
+        String username = S.nextLine();
+
+        System.out.print("Enter your password: ");
+        String password = S.nextLine();
+
+        member.setCredentials(username, password);
     }
 }
 
@@ -62,6 +143,10 @@ class Member extends User {
         this.username = username;
         this.password = password;
     } 
+
+    public String getUsername() {
+        return this.username;
+    }
 
     public void login(String username, String password) {
         if (!(username.equals(this.username) && password.equals(this.password))) return;
