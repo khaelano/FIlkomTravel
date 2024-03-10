@@ -40,6 +40,8 @@ public class FilkomTravel {
         String brand = S.nextLine();
         System.out.print("Enter car model: ");
         String model = S.nextLine();
+        System.out.print("Enter the car color: ");
+        String color = S.nextLine();
         System.out.print("Enter car license plate: ");
         String licensePlate = S.nextLine();
         
@@ -50,6 +52,7 @@ public class FilkomTravel {
                 car.brand = brand;
                 car.model = model;
                 car.licensePlateNum = licensePlate;
+                car.color = color;
                 break;
         
             case "medium":
@@ -57,6 +60,7 @@ public class FilkomTravel {
                 car.brand = brand;
                 car.model = model;
                 car.licensePlateNum = licensePlate;
+                car.color = color;
                 break;
         
             case "large":
@@ -64,6 +68,7 @@ public class FilkomTravel {
                 car.brand = brand;
                 car.model = model;
                 car.licensePlateNum = licensePlate;
+                car.color = color;
                 break;
         
             default:
@@ -80,6 +85,15 @@ public class FilkomTravel {
         Car car = generateCar();
 
         Order order  = guest.order(car);
+        
+        System.out.println("Set rent start date and time in this format: ");
+        System.out.print("dd/MM/yyyy HH:mm ");
+        order.setRentStartDate(S.nextLine());
+
+        System.out.println("Set rent start date and time in this format: ");
+        System.out.print("dd/MM/yyyy HH:mm ");
+        order.setRentEndtDate(S.nextLine());
+
         order.printBill();
     }
 
@@ -258,7 +272,7 @@ class Order {
         LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
 
         if (proposedDate.isAfter(this.rentStartDate)) {
-            this.rentStartDate = proposedDate;
+            this.rentEndDate = proposedDate;
         } else {
             System.out.println("Error! The rent end date can't be before rent start date!");
         }
@@ -275,7 +289,7 @@ class Order {
     }
 
     public void printBill() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         Car car = this.rentedCar;
 
         System.out.println("################################################");
@@ -288,9 +302,9 @@ class Order {
         System.out.printf("%-21s: %s\n", "Brand Name", car.brand);
         System.out.printf("%-21s: %s\n", "Model", car.model);
         System.out.printf("%-21s: %s\n", "Color", car.color);
-        System.out.printf("%-21s: %s\n", "Capacity", car.capacity);
-        System.out.printf("%-21s: %s /hr\n", "License Plate Number", car.licensePlateNum);
-        System.out.printf("%-21s: %s person\n", "Rental Fee", car.rentFee);
+        System.out.printf("%-21s: %s person\n", "Capacity", car.capacity);
+        System.out.printf("%-21s: %s\n", "License Plate Number", car.licensePlateNum);
+        System.out.printf("%-21s: %s /hr\n", "Rental Fee", car.rentFee);
         System.out.println("------------------------------------------------");
         System.out.println("------------------ Rent Details ----------------");
         System.out.printf("%-20s: %s\n", "Start Date", this.rentStartDate.format(formatter));
