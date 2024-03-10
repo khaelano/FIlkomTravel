@@ -82,6 +82,7 @@ public class FilkomTravel {
     }
     
     private static void guestMode() {
+        // Unfinished
         User guest = guestRegistration();
         Car car = generateCar();
 
