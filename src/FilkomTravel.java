@@ -1,19 +1,22 @@
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class FilkomTravel {
-    private static ArrayList<Member> memberDB;
+    private static HashMap<String, Member> memberDB;
+    private static ArrayList<Car> carDB;
     private static Scanner S;
 
     public static void main(String[] args) throws Exception {
-        memberDB = new ArrayList<>();
+        memberDB = new HashMap<>();
         S = new Scanner(System.in);
+        carDB = new ArrayList<>();
 
         while (true) {
             System.out.println("Welcome to Filkom Travel!!");
-            System.out.print("Do you want to rent as member? [y/n] ");
+            System.out.print("Do you want to log in as member? [y/n] ");
             String selection = S.nextLine();
 
             switch (selection) {
@@ -29,6 +32,33 @@ public class FilkomTravel {
                     break;
             }
         }
+    }
+
+    public static Order takeOrder(User user) {
+        System.out.println("------------------------------------------------");
+        System.out.println("|                  Order Mode                  |");
+        System.out.println("------------------------------------------------");
+        
+        // Print all available cars .....
+
+        System.out.printf("Please choose your car [0-%d] : ", carDB.size() - 1);
+        Car car = carDB.get(S.nextInt());
+        S.nextLine();
+
+        System.out.println("--------- Set rent start and end date ----------");
+        System.out.println("The time formatting is [dd/MM/yyyy HH:mm]");
+        System.out.println("Example: 29/05/2024 23:15");
+        System.out.printf("%-20s: ", "Enter start date");
+        String startDate = S.nextLine();
+        System.out.printf("%-20s: ", "Enter end date");
+        String endDate = S.nextLine();
+        System.out.println();
+
+        Order order = user.order(car);
+        order.setRentStartDate(startDate);
+        order.setRentEndtDate(endDate);
+
+        return order;
     }
 
     private static Car generateCar() {
@@ -84,20 +114,7 @@ public class FilkomTravel {
     private static void guestMode() {
         // Unfinished
         User guest = guestRegistration();
-        Car car = generateCar();
-
-        Order order = guest.order(car);
-
-        System.out.println("Set rent start date and time in this format: ");
-        System.out.print("dd/MM/yyyy HH:mm ");
-        order.setRentStartDate(S.nextLine());
-        System.out.println();
-
-        System.out.println("Set rent end date and time in this format: ");
-        System.out.print("dd/MM/yyyy HH:mm ");
-        order.setRentEndtDate(S.nextLine());
-
-        System.out.println();
+        Order order = takeOrder(guest);
 
         order.printBill();
     }
@@ -105,31 +122,50 @@ public class FilkomTravel {
     private static void memberMode() {
         System.out.print("Have you registered as a member? [y/n] ");
         String selection = S.nextLine();
+        Order order;
+        Member member;
+
+        switch (selection) {
+            case "y":
+                member = memberLogin();
+                break;
+        
+            case "n":
+                member = memberRegistration();
+                break;
+
+            default:
+                System.out.println("Please input a valid value");
+                member = null;
+                break;
+        }
+
+        Car car = generateCar();
+        order = member.order(car);
     }
 
-    private static void memberLogin() {
+    private static Member memberLogin() {
         System.out.print("Enter your username: ");
         String username = S.nextLine();
-
         System.out.print("Enter your password: ");
         String password = S.nextLine();
+        Member member = memberDB.get(username);
 
-        // Member member = memberDB.;
+        member.login(username, password);
+        System.out.println("Login Successful!");
+
+        return member;
     }
 
     private static User guestRegistration() {
         // Basic user registration
         System.out.print("Enter your name: ");
         String name = S.nextLine();
-
         System.out.print("Enter your identity number: ");
         String identityNum = S.nextLine();
-
         User guest = new User(name, identityNum);
-
         System.out.print("Enter your phone number: ");
         guest.phoneNum = S.nextLine();
-
         System.out.print("Enter your home address: ");
         guest.address = S.nextLine();
         System.out.println();
@@ -154,7 +190,6 @@ public class FilkomTravel {
         member.address = S.nextLine();
 
         // Set the user credentials
-        member.login(null, null);
         System.out.print("Enter your username: ");
         String username = S.nextLine();
 
@@ -163,6 +198,7 @@ public class FilkomTravel {
         System.out.println();
 
         member.setCredentials(username, password);
+        memberDB.put(username, member);
 
         return member;
     }
