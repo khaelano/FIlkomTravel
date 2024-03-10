@@ -44,6 +44,7 @@ public class FilkomTravel {
         String color = S.nextLine();
         System.out.print("Enter car license plate: ");
         String licensePlate = S.nextLine();
+        System.out.println();
         
         Car car;
         switch (carType) {
@@ -89,10 +90,13 @@ public class FilkomTravel {
         System.out.println("Set rent start date and time in this format: ");
         System.out.print("dd/MM/yyyy HH:mm ");
         order.setRentStartDate(S.nextLine());
+        System.out.println();
 
-        System.out.println("Set rent start date and time in this format: ");
+        System.out.println("Set rent end date and time in this format: ");
         System.out.print("dd/MM/yyyy HH:mm ");
         order.setRentEndtDate(S.nextLine());
+
+        System.out.println();
 
         order.printBill();
     }
@@ -127,6 +131,7 @@ public class FilkomTravel {
 
         System.out.print("Enter your home address: ");
         guest.address = S.nextLine();
+        System.out.println();
 
         return guest;
     }
@@ -154,6 +159,7 @@ public class FilkomTravel {
 
         System.out.print("Enter your password: ");
         String password = S.nextLine();
+        System.out.println();
 
         member.setCredentials(username, password);
 
@@ -315,6 +321,7 @@ class Order {
         System.out.println("######  Thank you for using FilkomTravel!  #####");
         System.out.println("######    We hope to see you next time!    #####");
         System.out.println("################################################");
+        System.out.println();
     }
 }
 
