@@ -239,9 +239,10 @@ class Order {
         this.invoiceDate = LocalDateTime.now();
     }
 
-    public void setRentStartDate(int year, int month, int day, int hour, int minute) {
+    public void setRentStartDate(String formattedDateAndTime) {
         // Unfinished
-        LocalDateTime proposedDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
         LocalDateTime currentDate = LocalDateTime.now();
 
         if (proposedDate.isAfter(currentDate)) {
@@ -251,9 +252,10 @@ class Order {
         }
     }
 
-    public void setRentEndtDate(int year, int month, int day, int hour, int minute) {
+    public void setRentEndtDate(String formattedDateAndTime) {
         // Unfinished
-        LocalDateTime proposedDate = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
 
         if (proposedDate.isAfter(this.rentStartDate)) {
             this.rentStartDate = proposedDate;
