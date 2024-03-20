@@ -4,20 +4,16 @@ import com.Order;
 import com.car.Car;
 
 public class User {
-    protected static int userCounter;
-    protected String UID;
-    protected String name;
-    protected String identityNum;
+    public String name;
+    public String phoneNum;
+    public String address;
+    protected String idNum;
     protected double discount;
-    String phoneNum;
-    String address;
 
-    public User(String name, String identityNum) {
+    public User(String name, String idNum) {
         this.name = name;
-        this.identityNum = identityNum;
-        this.UID = "101" + Integer.toString(userCounter);
+        this.idNum = idNum;
         this.discount = 0;
-        userCounter++;
     }
 
     public Order order(Car car) {
@@ -26,15 +22,7 @@ public class User {
         return order;
     }
 
-    public String getUID() {
-        return this.UID;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getIdentityNum() {
-        return this.identityNum;
+    public String getIdNum() {
+        return this.idNum;
     }
 }

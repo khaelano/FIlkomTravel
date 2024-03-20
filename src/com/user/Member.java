@@ -11,21 +11,16 @@ public class Member extends User {
     private boolean loggedIn;
     private ArrayList<Order> orderHistory;
 
-    public Member(String name, String identityNum) {
-        super(name, identityNum);
-        this.identityNum = "111" + Integer.toString(userCounter);
+    public Member(String name, String idNum, String username, String password) {
+        super(name, idNum);
+
+        this.username = username;
+        this.password = password;
+
         this.discount = 0.1;
         this.loggedIn = true;
 
         this.orderHistory = new ArrayList<>();
-    }
-
-    public void setCredentials(String username, String password) {
-        if (!loggedIn)
-            return;
-
-        this.username = username;
-        this.password = password;
     }
 
     public String getUsername() {
@@ -37,7 +32,7 @@ public class Member extends User {
             System.out.println("Login Failed!");
             throw new RuntimeException("Fatal: Incorrect Credentials!");
         }
-        
+
         System.out.println("Logged In!");
         this.loggedIn = true;
     }
@@ -48,6 +43,9 @@ public class Member extends User {
 
     @Override
     public Order order(Car car) {
+        if (!loggedIn)
+            throw new SecurityException("You must log in to do this operation");
+
         Order order = new Order(this, car);
 
         orderHistory.add(order);
@@ -57,16 +55,16 @@ public class Member extends User {
     public void printHistory() {
         System.out.println("-------------------------------------------------------------------------------------");
         System.out.println("--------------------------------- Order History -------------------------------------");
-        System.out.printf("| %-16s | %-16s | %-16s | %-8s | %-13s |\n", "Invoice Date", "Start Date", "End Date", "Duration", "Net. Charges");
+        System.out.printf("| %-16s | %-16s | %-16s | %-8s | %-13s |\n", "Invoice Date", "Start Date", "End Date",
+                "Duration", "Net. Charges");
 
         for (Order order : orderHistory) {
-            System.out.printf("| %-16s | %-16s | %-16s | %-5s hr | Rp. %-9s |\n", 
-                order.getInvoiceDate(),
-                order.getRentStartDate(), 
-                order.getRentEndDate(), 
-                order.calculateDuration(),
-                order.calculateTotalCharges()
-            );
+            System.out.printf("| %-16s | %-16s | %-16s | %-5s hr | Rp. %-9s |\n",
+                    order.getInvoiceDate(),
+                    order.getRentStartDate(),
+                    order.getRentEndDate(),
+                    order.calculateDuration(),
+                    order.calculateTotalCharges());
         }
 
         System.out.println("-------------------------------------------------------------------------------------");
