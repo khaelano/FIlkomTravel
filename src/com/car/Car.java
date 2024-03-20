@@ -1,37 +1,25 @@
 package com.car;
 
 public class Car {
-    protected int rentFee;
-    protected String brand;
-    protected String model;
-    protected String color;
-    protected String licensePlateNum;
-    protected int capacity;
+    public String brand;
+    public String model;
+    public String color;
+    protected String licensePlate;
     protected boolean includeDriver;
-    protected int carUniqueCode;
 
-    public int getRentFee() {
-        return this.rentFee;
+    public final int FEE = 0;
+    public final int CAPACITY = 0;
+
+    public Car(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 
-    public int getCapacity() {
-        return this.capacity;
-    }
-
-    protected void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public boolean isIncludeDriver(boolean includeDriver) {
+    public boolean isDriverIncluded(boolean includeDriver) {
         this.includeDriver = includeDriver;
         return this.includeDriver;
     }
 
-    public void setCarUniqueCode(int carUniqueCode){
-        this.carUniqueCode = carUniqueCode;
-    }
-
-    public int getCarUniqueCode(){
-        return this.carUniqueCode;
+    public String getLicensePlate() {
+        return this.licensePlate;
     }
 }

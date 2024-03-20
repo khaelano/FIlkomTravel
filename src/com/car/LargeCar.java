@@ -1,15 +1,10 @@
 package com.car;
 
-
 public class LargeCar extends Car {
-    LargeCar(){
-        super();
-        setCapacity(16);
-        this.rentFee = 120_000;
-    }
+    public final int FEE = 40_000;
+    public final int CAPACITY = 5;
 
-    void carCapacity() {
-        if (isIncludeDriver(true)) 
-            capacity -= 1;
+    public LargeCar(String licensePlate) {
+        super(licensePlate);
     }
 }

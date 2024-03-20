@@ -1,14 +1,10 @@
 package com.car;
 
 public class MediumCar extends Car {
-    MediumCar(){
-        super();
-        setCapacity(8);
-        this.rentFee = 80_000;
-    }
+    public final int FEE = 80_000;
+    public final int CAPACITY = 8;
 
-    void carCapacity() {
-        if (isIncludeDriver(true))
-            capacity -= 1;
+    public MediumCar(String licensePlate) {
+        super(licensePlate);
     }
 }
