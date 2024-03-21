@@ -1,20 +1,20 @@
-## Getting Started
+# FilkomTravel
+Sebuah program simulasi rental mobil online
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+<img src="FilkomTravel-UML.svg">
 
-## Folder Structure
+### Anggota 1
+Nama : Khaelano Abroor Maulana<br>
+NIM  : 235150200111051<br>
 
-Output Format:
-Brand: [brand]
-Model: [model]
-License Plate: [licensePlateNum]
-Capacity: [capacity] persons
+### Anggota 2
+Nama :<br>
+NIM  :<br>
 
-Rent Fee: Rp[rentFee] per hour
-Driver: [Include/Not Include]
-------------------
-Car Unique Code : [uniqueCode]
+### Anggota 3
+Nama :<br>
+NIM  :<br>
 
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+### Anggota 4
+Nama :<br>
+NIM  :<br>
