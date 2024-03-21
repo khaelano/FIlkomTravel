@@ -1,5 +1,3 @@
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -160,14 +158,6 @@ public class FilkomTravel {
         System.out.print("Enter your identity number: ");
         String identityNum = S.nextLine();
 
-        Member member = new Member(name, identityNum);
-
-        System.out.print("Enter your phone number: ");
-        member.phoneNum = S.nextLine();
-
-        System.out.print("Enter your home address: ");
-        member.address = S.nextLine();
-
         // Set the user credentials
         System.out.print("Enter your username: ");
         String username = S.nextLine();
@@ -175,10 +165,18 @@ public class FilkomTravel {
         System.out.print("Enter your password: ");
         String password = S.nextLine();
 
+        Member member = new Member(name, identityNum, username, password);
+
+        // More user information registrarion
+        System.out.print("Enter your phone number: ");
+        member.phoneNum = S.nextLine();
+
+        System.out.print("Enter your home address: ");
+        member.address = S.nextLine();
+
         System.out.println("Registration Successful!");
         System.out.println();
 
-        member.setCredentials(username, password);
         memberDB.put(username, member);
 
         return member;
@@ -187,82 +185,52 @@ public class FilkomTravel {
     private static ArrayList<Car> carInitialization() {
         ArrayList<Car> cars = new ArrayList<>();
         // Small Cars
-        SmallCar sc1 = new SmallCar();
+        SmallCar sc1 = new SmallCar("A 54 HEL");
         sc1.brand = "Honda";
         sc1.model = "Brio";
-        sc1.licensePlateNum = "A 54 HEL";
-        sc1.isIncludeDriver(false);
-        sc1.carCapacity();
-        sc1.getRentFee();
-        sc1.setCarUniqueCode(433);
+        sc1.includeDriver = false;
         sc1.color = "Red";
         cars.add(sc1);
     
-        SmallCar sc2 = new SmallCar();
+        SmallCar sc2 = new SmallCar("M 43 NG");
         sc2.brand = "Daihatsu";
         sc2.model = "Ayla";
-        sc2.licensePlateNum = "M 43 NG";
-        sc2.isIncludeDriver(true);
-        sc2.carCapacity();
-        sc2.getRentFee();
-        sc2.setCarUniqueCode(333);
+        sc2.includeDriver = true;
         sc2.color = "Blue";
         cars.add(sc2);
         
         // Medium Cars
-        MediumCar mc1 = new MediumCar();
+        MediumCar mc1 = new MediumCar("N 941 AM");
         mc1.brand = "Toyota";
         mc1.model = "Avanza";
-        mc1.licensePlateNum = "N 941 AM";
-        mc1.isIncludeDriver(true);
-        mc1.carCapacity();
-        mc1.getRentFee();
-        mc1.setCarUniqueCode(999);
+        mc1.includeDriver = true;
         mc1.color = "Silver";
         cars.add(mc1);
         
-        MediumCar mc2 = new MediumCar();
+        MediumCar mc2 = new MediumCar("N 4 KAM");
         mc2.brand = "Honda";
         mc2.model = "BRV";
-        mc2.licensePlateNum = "N 4 KAM";
-        mc2.isIncludeDriver(false);
-        mc2.carCapacity();
-        mc2.getRentFee();
-        mc2.setCarUniqueCode(215);
+        mc2.includeDriver = false;
         mc2.color = "Black";
         cars.add(mc2);
         
-        MediumCar mc3 = new MediumCar();
+        MediumCar mc3 = new MediumCar("N 45 GOR");
         mc3.brand = "Daihatsu";
         mc3.model = "Sigra";
-        mc3.licensePlateNum = "N 45 GOR";
-        mc3.isIncludeDriver(true);
-        mc3.carCapacity();
-        mc3.getRentFee();
-        mc3.setCarUniqueCode(468);
+        mc3.includeDriver = true;
         mc3.color = "Black";
         cars.add(mc3);
         
         // Large Cars
-        LargeCar lc1 = new LargeCar();
+        LargeCar lc1 = new LargeCar("B 490 NG");
         lc1.brand = "Toyota";
         lc1.model = "HiAce";
-        lc1.licensePlateNum = "B 490 NG";
-        lc1.isIncludeDriver(true);
-        lc1.carCapacity();
-        lc1.getRentFee();
-        lc1.setCarUniqueCode(222);
         lc1.color = "White";
         cars.add(lc1);
         
-        LargeCar lc2 = new LargeCar();
+        LargeCar lc2 = new LargeCar("B 444 AA");
         lc2.brand = "Isuzu";
         lc2.model = "Elf Microbus";
-        lc2.licensePlateNum = "B 444 AA";
-        lc2.isIncludeDriver(false);
-        lc2.carCapacity();
-        lc2.getRentFee();
-        lc2.setCarUniqueCode(122);
         lc2.color = "White";
         cars.add(lc2);
 
@@ -281,10 +249,10 @@ public class FilkomTravel {
                 i, 
                 car.brand, 
                 car.model, 
-                car.licensePlateNum, 
-                car.getRentFee(), 
+                car.getLicensePlate(), 
+                car.getRentalFee(), 
                 car.color, 
-                car.capacity
+                car.getCapacity()
             );
         }
         System.out.println("-------------------------------------------------------------------------------------");
