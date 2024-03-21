@@ -2,10 +2,9 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.Order;
+import com.*;
 import com.car.*;
-import com.user.Member;
-import com.user.User;
+import com.user.*;
 
 public class FilkomTravel {
     private static HashMap<String, Member> memberDB;
