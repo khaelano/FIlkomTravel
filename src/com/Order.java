@@ -67,13 +67,13 @@ public class Order {
         return this.rentedCar;
     }
 
-    public int calculateDuration() {
+    public double calculateDuration() {
         Duration duration = Duration.between(rentStartDate, rentEndDate);
-        return (int) Math.ceil(duration.getSeconds() / 3600);
+        return Math.ceil(duration.getSeconds() / 3600);
     }
 
     public int calculateTotalCharges() {
-        int durationInHour = calculateDuration();
+        double durationInHour = calculateDuration();
         return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentalFee() * (1 - this.renter.getDiscount()));
     }
 
@@ -98,7 +98,7 @@ public class Order {
         System.out.println("------------------ Rent Details ----------------");
         System.out.printf("%-20s: %s\n", "Start Date", getRentStartDate());
         System.out.printf("%-20s: %s\n", "End Date", getRentEndDate());
-        System.out.printf("%-20s: %s hour\n", "Duration", Integer.toString(calculateDuration()));
+        System.out.printf("%-20s: %s hour\n", "Duration", Double.toString(calculateDuration()));
         System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.getRentalFee() * Math.ceil(calculateDuration()/6)));
         System.out.printf("%-30s: Rp. %s\n", "Total Charges (after discount)", Integer.toString(calculateTotalCharges()));
         System.out.println("################################################");
