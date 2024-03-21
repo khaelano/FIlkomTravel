@@ -74,7 +74,7 @@ public class Order {
 
     public int calculateTotalCharges() {
         int durationInHour = calculateDuration();
-        return (int) (Math.ceil(durationInHour/6) * rentedCar.FEE * (1 - this.renter.getDiscount()));
+        return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentalFee() * (1 - this.renter.getDiscount()));
     }
 
     public void printBill() {
@@ -92,14 +92,14 @@ public class Order {
         System.out.printf("%-21s: %s\n", "Color", car.color);
         System.out.printf("%-21s: %s\n", "License Plate Number", car.getLicensePlate());
         System.out.printf("%-21s: %b\n", "include driver?", car.includeDriver);
-        System.out.printf("%-21s: %s person\n", "Capacity", car.CAPACITY);
-        System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.FEE);
+        System.out.printf("%-21s: %s person\n", "Capacity", car.getCapacity());
+        System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.getRentalFee());
         System.out.println("------------------------------------------------");
         System.out.println("------------------ Rent Details ----------------");
         System.out.printf("%-20s: %s\n", "Start Date", getRentStartDate());
         System.out.printf("%-20s: %s\n", "End Date", getRentEndDate());
         System.out.printf("%-20s: %s hour\n", "Duration", Integer.toString(calculateDuration()));
-        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.FEE * Math.ceil(calculateDuration()/6)));
+        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.getRentalFee() * Math.ceil(calculateDuration()/6)));
         System.out.printf("%-30s: Rp. %s\n", "Total Charges (after discount)", Integer.toString(calculateTotalCharges()));
         System.out.println("################################################");
         System.out.println("######  Thank you for using FilkomTravel!  #####");
