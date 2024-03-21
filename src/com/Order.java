@@ -9,8 +9,8 @@ import com.user.*;
 
 public class Order {
     private LocalDateTime invoiceDate;
-    User renter;
-    Car rentedCar;
+    private User renter;
+    private Car rentedCar;
     private LocalDateTime rentStartDate;
     private LocalDateTime rentEndDate;
 
@@ -22,7 +22,6 @@ public class Order {
     }
 
     public void setRentStartDate(String formattedDateAndTime) {
-        // Unfinished
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
         LocalDateTime currentDate = LocalDateTime.now();
@@ -35,7 +34,6 @@ public class Order {
     }
 
     public void setRentEndDate(String formattedDateAndTime) {
-        // Unfinished
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
 
@@ -61,6 +59,14 @@ public class Order {
         return this.invoiceDate.format(formatter);
     }
 
+    public String getRenterName() {
+        return this.renter.name;
+    }
+
+    public Car getRentedCar() {
+        return this.rentedCar;
+    }
+
     public int calculateDuration() {
         Duration duration = Duration.between(rentStartDate, rentEndDate);
         return (int) Math.ceil(duration.getSeconds() / 3600);
@@ -68,7 +74,7 @@ public class Order {
 
     public int calculateTotalCharges() {
         int durationInHour = calculateDuration();
-        return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentFee() * (1 - this.renter.discount));
+        return (int) (Math.ceil(durationInHour/6) * rentedCar.FEE * (1 - this.renter.getDiscount()));
     }
 
     public void printBill() {
@@ -84,16 +90,16 @@ public class Order {
         System.out.printf("%-21s: %s\n", "Brand Name", car.brand);
         System.out.printf("%-21s: %s\n", "Model", car.model);
         System.out.printf("%-21s: %s\n", "Color", car.color);
-        System.out.printf("%-21s: %s\n", "License Plate Number", car.licensePlateNum);
+        System.out.printf("%-21s: %s\n", "License Plate Number", car.getLicensePlate());
         System.out.printf("%-21s: %b\n", "include driver?", car.includeDriver);
-        System.out.printf("%-21s: %s person\n", "Capacity", car.capacity);
-        System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.rentFee);
+        System.out.printf("%-21s: %s person\n", "Capacity", car.CAPACITY);
+        System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.FEE);
         System.out.println("------------------------------------------------");
         System.out.println("------------------ Rent Details ----------------");
         System.out.printf("%-20s: %s\n", "Start Date", getRentStartDate());
         System.out.printf("%-20s: %s\n", "End Date", getRentEndDate());
         System.out.printf("%-20s: %s hour\n", "Duration", Integer.toString(calculateDuration()));
-        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.getRentFee() * Math.ceil(calculateDuration()/6)));
+        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.FEE * Math.ceil(calculateDuration()/6)));
         System.out.printf("%-30s: Rp. %s\n", "Total Charges (after discount)", Integer.toString(calculateTotalCharges()));
         System.out.println("################################################");
         System.out.println("######  Thank you for using FilkomTravel!  #####");
