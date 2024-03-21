@@ -1,7 +1,7 @@
 # FilkomTravel
 Sebuah program simulasi rental mobil online
 
-<img src="FilkomTravel-UML-transparent.svg">
+<img src="FilkomTravel-UML.svg">
 
 ### Anggota 1
 Nama : Khaelano Abroor Maulana<br>
