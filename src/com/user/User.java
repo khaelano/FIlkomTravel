@@ -25,4 +25,8 @@ public class User {
     public String getIdNum() {
         return this.idNum;
     }
+
+    public double getDiscount() {
+        return this.discount;
+    }
 }
