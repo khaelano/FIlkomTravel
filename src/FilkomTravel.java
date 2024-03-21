@@ -6,6 +6,7 @@ import com.*;
 import com.car.*;
 import com.user.*;
 
+
 public class FilkomTravel {
     private static HashMap<String, Member> memberDB;
     private static ArrayList<Car> carDB;
@@ -16,6 +17,11 @@ public class FilkomTravel {
         carDB = carInitialization();
         S = new Scanner(System.in);
 
+        welcomeScreen();
+
+    }
+
+    public static void welcomeScreen() {
         while (true) {
             System.out.println("Welcome to Filkom Travel!!");
             System.out.print("Do you want to log in as member and get 10% discount? [y/n] ");
@@ -33,6 +39,13 @@ public class FilkomTravel {
                     System.out.println("Please input a valid value");
                     System.out.println();
                     return;
+            }
+
+            System.out.print("Do you want to continue? [y/n] ");
+            selection = S.nextLine();
+            if (selection.equals("n")) {
+                System.out.println("Thank you for using Filkom Travel");
+                break;
             }
         }
     }
@@ -68,7 +81,6 @@ public class FilkomTravel {
     }
 
     private static void guestMode() {
-        // Unfinished
         User guest = guestRegistration();
         Order order = takeOrder(guest);
 
