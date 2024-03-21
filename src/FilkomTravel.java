@@ -14,7 +14,7 @@ public class FilkomTravel {
 
     public static void main(String[] args) throws Exception {
         memberDB = new HashMap<>();
-        carDB = carInitialization();
+        carDB = initializeCars();
         S = new Scanner(System.in);
 
         welcomeScreen();
@@ -193,7 +193,7 @@ public class FilkomTravel {
         return member;
     }
 
-    private static ArrayList<Car> carInitialization() {
+    private static ArrayList<Car> initializeCars() {
         ArrayList<Car> cars = new ArrayList<>();
         // Small Cars
         SmallCar sc1 = new SmallCar("A 54 HEL");
