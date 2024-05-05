@@ -1,5 +1,6 @@
 package com.user;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.Order;
@@ -10,46 +11,45 @@ public class Member extends User {
     private String password;
     private boolean loggedIn;
     private ArrayList<Order> orderHistory;
+    private LocalDate joinDate;
 
-    public Member(String name, String idNum, String username, String password) {
-        super(name, idNum);
-
-        this.username = username;
-        this.password = password;
-
-        this.discount = 0.1;
+    public Member(String firstName, String lastName) {
+        super(firstName, lastName);
         this.loggedIn = true;
 
         this.orderHistory = new ArrayList<>();
+    }
+
+    public boolean register(String username, String password) {
+        if (this.loggedIn != true) return false;
+
+        this.username = username;
+        this.password = password;
+        return true;
     }
 
     public String getUsername() {
         return this.username;
     }
 
-    public void login(String username, String password) {
-        if (!(username.equals(this.username) && password.equals(this.password))) {
-            System.out.println("Login Failed!");
-            throw new RuntimeException("Fatal: Incorrect Credentials!");
-        }
+    public boolean login(String username, String password) {
+        if (!(username.equals(this.username) && password.equals(this.password))) return false;
 
         System.out.println("Logged In!");
         this.loggedIn = true;
+        return true;
     }
 
-    public void logout() {
+    public boolean logout() {
+        if (this.loggedIn == true) return false;
+
         this.loggedIn = false;
+        return true;
     }
 
     @Override
-    public Order order(Car car) {
-        if (!loggedIn)
-            throw new SecurityException("You must log in to do this operation");
-
-        Order order = new Order(this, car);
-
-        orderHistory.add(order);
-        return order;
+    public boolean makeOrder(Car car) {
+        
     }
 
     public void printHistory() {
