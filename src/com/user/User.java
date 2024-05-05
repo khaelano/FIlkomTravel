@@ -5,6 +5,7 @@ import com.car.Car;
 import java.util.HashMap;
 
 public abstract class User {
+    private static int counter;
     private String firstName;
     private String lastName;
     private int idNum;
@@ -14,11 +15,12 @@ public abstract class User {
 
     boolean isOrdering;
 
-    public User(String firstName, String lastName, int idNum) {
+    public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.idNum = idNum;
+        this.idNum = counter;
         this.orders = new HashMap<>();
+        counter++;
     }
 
     public abstract boolean makeOrder(Car car);
