@@ -1,7 +1,7 @@
 package com.user;
 
-import com.Order;
 import com.car.Car;
+import com.payment.Order;
 import java.util.HashMap;
 
 public abstract class User {
