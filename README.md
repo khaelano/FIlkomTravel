@@ -8,13 +8,13 @@ Nama : Khaelano Abroor Maulana<br>
 NIM  : 235150200111051<br>
 
 ### Anggota 2
-Nama :<br>
-NIM  :<br>
+Nama : Arza Marevi Bangun<br>
+NIM  : 235150200111057<br>
 
 ### Anggota 3
-Nama :<br>
-NIM  :<br>
+Nama : Muhammad Lutfi Aziz<br>
+NIM  : 235150207111058<br>
 
 ### Anggota 4
-Nama :<br>
-NIM  :<br>
+Nama : Nabiel Tatra Edy Firdaus<br>
+NIM  : 235150207111059<br>
