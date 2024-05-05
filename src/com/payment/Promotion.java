@@ -1,5 +1,5 @@
 package com.payment;
 
-public abstract class Promotion implements Applicable {
-
+public abstract class Promotion implements Applicable, Comparable {
+    
 }

@@ -77,6 +77,11 @@ public class Order {
         return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentalFee() * (1 - this.renter.getDiscount()));
     }
 
+    public int calulateCharges(){
+        Car car = this.rentedCar;
+        return (int) (car.getRentalFee() * Math.ceil(calculateDuration()/6));
+    }
+
     public void printBill() {
         Car car = this.rentedCar;
 
@@ -99,7 +104,7 @@ public class Order {
         System.out.printf("%-20s: %s\n", "Start Date", getRentStartDate());
         System.out.printf("%-20s: %s\n", "End Date", getRentEndDate());
         System.out.printf("%-20s: %s hour\n", "Duration", Double.toString(calculateDuration()));
-        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.getRentalFee() * Math.ceil(calculateDuration()/6)));
+        System.out.printf("%-30s: Rp. %s\n", "Total Charges", calulateCharges());
         System.out.printf("%-30s: Rp. %s\n", "Total Charges (after discount)", Integer.toString(calculateTotalCharges()));
         System.out.println("################################################");
         System.out.println("######  Thank you for using FilkomTravel!  #####");
