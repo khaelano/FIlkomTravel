@@ -1,7 +1,7 @@
 package com.user;
 
-import com.Order;
 import com.car.Car;
+import com.payment.Order;
 
 public class User {
     public String name;
