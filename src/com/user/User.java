@@ -2,31 +2,50 @@ package com.user;
 
 import com.Order;
 import com.car.Car;
+import java.util.HashMap;
 
-public class User {
-    public String name;
-    public String phoneNum;
-    public String address;
-    protected String idNum;
-    protected double discount;
+public abstract class User {
+    private String firstName;
+    private String lastName;
+    private int idNum;
+    private int phoneNum;
+    private String address;
+    protected HashMap<Integer, Order> orders;
 
-    public User(String name, String idNum) {
-        this.name = name;
+    boolean isOrdering;
+
+    public User(String firstName, String lastName, int idNum) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.idNum = idNum;
-        this.discount = 0;
+        this.orders = new HashMap<>();
     }
 
-    public Order order(Car car) {
-        Order order = new Order(this, car);
+    public abstract boolean makeOrder(Car car);
 
-        return order;
+    public abstract boolean confirmPayment(int orderID);
+
+    public int getPhoneNum() {
+        return this.phoneNum;
     }
 
-    public String getIdNum() {
+    public String getAddress() {
+        return this.address;
+    }
+
+    public int getIdNum() {
         return this.idNum;
     }
 
-    public double getDiscount() {
-        return this.discount;
+    public String getFirstName() {
+        return this.firstName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
+    public String getFullName() {
+        return lastName != null ? firstName + " " + lastName : firstName;
     }
 }
