@@ -8,8 +8,8 @@ public abstract class User {
     private String firstName;
     private String lastName;
     private int idNum;
-    private int phoneNum;
-    private String address;
+    public int phoneNum;
+    public String address;
     protected HashMap<Integer, Order> orders;
 
     boolean isOrdering;
@@ -24,14 +24,6 @@ public abstract class User {
     public abstract boolean makeOrder(Car car);
 
     public abstract boolean confirmPayment(int orderID);
-
-    public int getPhoneNum() {
-        return this.phoneNum;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
 
     public int getIdNum() {
         return this.idNum;
