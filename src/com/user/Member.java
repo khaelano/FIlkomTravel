@@ -1,5 +1,6 @@
 package com.user;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -27,14 +28,10 @@ public class Member extends User {
         this.password = password;
         return true;
     }
-
-    public String getUsername() {
-        return this.username;
-    }
-
+    
     public boolean login(String username, String password) {
         if (!(username.equals(this.username) && password.equals(this.password))) return false;
-
+        
         System.out.println("Logged In!");
         this.loggedIn = true;
         return true;
@@ -45,11 +42,6 @@ public class Member extends User {
 
         this.loggedIn = false;
         return true;
-    }
-
-    @Override
-    public boolean makeOrder(Car car) {
-        
     }
 
     public void printHistory() {
@@ -69,5 +61,35 @@ public class Member extends User {
 
         System.out.println("-------------------------------------------------------------------------------------");
         System.out.println();
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public int getMembershipDuration() {
+        Duration dur = Duration.between(joinDate, LocalDate.now());
+        long dayToSecond = 86400;
+        return (int) (dur.getSeconds() / dayToSecond);
+    }
+
+    @Override
+    public boolean makeOrder(Car car, int quantity) {
+        Order order = new Order(car, quantity, this);
+        orders.put(order.getOrderID(), order);
+
+        return true;
+    }
+
+    @Override
+    public boolean confirmPayment(int orderID) {
+        Order order = this.orders.get(orderID);
+        
+        if (order == null) return false;
+
+        order.pay();
+        orderHistory.add(orders.remove(orderID));
+
+        return true;
     }
 }

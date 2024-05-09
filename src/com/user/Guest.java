@@ -20,7 +20,7 @@ public class Guest extends User {
         
         if (order == null) return false;
         order.pay();
- 
+        orders.remove(orderID);
 
         return true;
     }
