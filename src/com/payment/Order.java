@@ -132,13 +132,13 @@ public class Order {
         if (this.renter instanceof Member) {
             Member member = (Member) renter;
             if (promo.isCustomerEligible(member) && promo.isMinimumPriceEligible(this)) {
-                this.totalDiscount += calculatePrice() * promo.getDiscount();
-                this.totalDiscount += calculatePrice() * promo.getCashback();
+                this.totalDiscount += calculatePrice() * promo.totalDiscount();
+                this.totalDiscount += calculatePrice() * promo.totalCashback();
                 result = true;
             }
 
-            if (promo.isShippingFeeEligible(this)) {
-                this.deliveryFee = this.deliveryFee * (1 - promo.getShippingDiscount());
+            if (promo.isShippingDiscountEligible(this)) {
+                this.deliveryFee = this.deliveryFee * (1 - promo.calculateShippingDiscount());
                 result = true;
             }
         }
