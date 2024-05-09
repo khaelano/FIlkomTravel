@@ -6,15 +6,16 @@ import com.user.*;
 
 public class PercentOffPromo extends Promotion{
     private String promoName;
-    private double discount;
+    private double rateDiscount;
 
-    public double getDiscount() {
-        return discount;
-    }
-
-    public PercentOffPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir) {
+    public PercentOffPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
+        this.rateDiscount = rateDiscount;
+    }
+
+    public double getRateDiscount() {
+        return rateDiscount;
     }
 
     @Override

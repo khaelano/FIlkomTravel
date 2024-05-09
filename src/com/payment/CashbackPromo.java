@@ -6,14 +6,16 @@ import com.user.User;
 
 public class CashbackPromo extends Promotion{
     private String promoName;
+    private double rateDiscount;
     
-
-    
-    public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir) {
-        this.promoCode = promoCode;
+    public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
+        super(promoCode, mulai, akhir);
         this.promoName = promoName;
-        this.mulai = mulai;
-        this.akhir = akhir;
+        this.rateDiscount = rateDiscount;
+    }
+
+    public double getRateDiscount() {
+        return rateDiscount;
     }
 
     @Override

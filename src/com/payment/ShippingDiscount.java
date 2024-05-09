@@ -6,10 +6,16 @@ import com.user.User;
 
 public class ShippingDiscount extends Promotion{
     private String promoName;
+    private double rateDiscount;
     
-    public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir) {
+    public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
+        this.rateDiscount = rateDiscount;
+    }
+
+    public double getRateDiscount() {
+        return rateDiscount;
     }
 
     @Override
