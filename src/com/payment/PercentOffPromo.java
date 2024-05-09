@@ -26,8 +26,9 @@ public class PercentOffPromo extends Promotion {
     }
 
     @Override
-    public int compareTo(Promotion other) {
-        return Double.compare(this.discountPercentage, other.discountPercentage);
+    public int compareTo(Promotion other) { 
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
@@ -59,7 +60,7 @@ public class PercentOffPromo extends Promotion {
     @Override
     public int totalDiscount(Order order) {
         if (isMinimumPriceEligible(order) == true) {
-            double potongan = order.calulateCharges() * discountPercentage;
+            double potongan = order.calculatePrice() * discountPercentage;
             return (int) potongan;
         } else {
             return 0;
