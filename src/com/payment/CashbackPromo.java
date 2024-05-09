@@ -16,18 +16,21 @@ public class CashbackPromo extends Promotion{
         this.minimumPrice = minimumPrice;
     }
 
-    @Override
-    public int compareTo(Promotion other) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
     public double getCashbackPercentage() {
         return cashbackPercentage;
     }
 
     @Override
-    public int calculateShippingDiscount(Order order) {
+    public boolean setOrder(Order order) {
+        if (order == null || !isMinimumPriceEligible(order)) return false;
+
+        this.order = order;
+
+        return true;
+    }
+
+    @Override
+    public int calculateShippingDiscount() {
         return 0;
     }
 
@@ -53,7 +56,7 @@ public class CashbackPromo extends Promotion{
     }
 
     @Override
-    public int totalCashback(Order order) {
+    public int totalCashback() {
         if (isMinimumPriceEligible(order) == true) {
             double cashback = order.calculatePrice() * cashbackPercentage;
             return (int) cashback;
@@ -63,7 +66,7 @@ public class CashbackPromo extends Promotion{
     }
 
     @Override
-    public int totalDiscount(Order order) {
+    public int totalDiscount() {
         return 0;
     }
 

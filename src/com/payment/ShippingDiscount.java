@@ -8,6 +8,7 @@ public class ShippingDiscount extends Promotion {
     private String promoName;
     private double discountPercentage;
     private int minimumShippingFee;
+    private Order order;
 
     public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir,
             double discountPercentage, int minimumShippingFee) {
@@ -17,10 +18,12 @@ public class ShippingDiscount extends Promotion {
         this.minimumShippingFee = minimumShippingFee;
     }
 
-    @Override
-    public int compareTo(Promotion other) {
-        // TODO Auto-generated method stub
-        return 0;
+    public boolean setOrder(Order order) {
+        if (order == null || !isShippingDiscountEligible(order)) return false;
+
+        this.order = order;
+
+        return true;
     }
 
     public String getPromoName() {
@@ -32,7 +35,7 @@ public class ShippingDiscount extends Promotion {
     }
 
     @Override
-    public int calculateShippingDiscount(Order order) {
+    public int calculateShippingDiscount() {
         if (isShippingDiscountEligible(order) == true) {
             double potongan = order.getShippingFee() * discountPercentage;
             return (int) potongan;
@@ -63,12 +66,12 @@ public class ShippingDiscount extends Promotion {
     }
 
     @Override
-    public int totalCashback(Order order) {
+    public int totalCashback() {
         return 0;
     }
 
     @Override
-    public int totalDiscount(Order order) {
+    public int totalDiscount() {
         return 0;
     }
 

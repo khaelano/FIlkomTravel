@@ -25,10 +25,12 @@ public class PercentOffPromo extends Promotion {
         return discountPercentage;
     }
 
-    @Override
-    public int compareTo(Promotion other) { 
-        // TODO Auto-generated method stub
-        return 0;
+    public boolean setOrder(Order order) {
+        if (order == null || !isMinimumPriceEligible(order)) return false;
+
+        this.order = order;
+
+        return true;
     }
 
     @Override
@@ -53,12 +55,12 @@ public class PercentOffPromo extends Promotion {
     }
 
     @Override
-    public int totalCashback(Order order) {
+    public int totalCashback() {
         return 0;
     }
 
     @Override
-    public int totalDiscount(Order order) {
+    public int totalDiscount() {
         if (isMinimumPriceEligible(order) == true) {
             double potongan = order.calculatePrice() * discountPercentage;
             return (int) potongan;
@@ -68,7 +70,7 @@ public class PercentOffPromo extends Promotion {
     }
 
     @Override
-    public int calculateShippingDiscount(Order order) {
+    public int calculateShippingDiscount() {
         return 0;
     }
 }
