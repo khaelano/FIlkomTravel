@@ -16,7 +16,13 @@ public class Order {
     private int carQuantity;
     private LocalDateTime rentStartDate;
     private LocalDateTime rentEndDate;
-    private double deliveryFee;
+    private double shippingFee;
+    private double cashBack;
+
+    public double getShippingFee() {
+        return shippingFee;
+    }
+
     private double totalDiscount;
     private OrderStatus status;
     private double subtotal;
@@ -95,7 +101,7 @@ public class Order {
     }
 
     public boolean checkOut() {
-        if (this.totalDiscount == 0) this.subtotal = calculatePrice() + deliveryFee;
+        if (this.totalDiscount == 0) this.subtotal = calculatePrice() + shippingFee;
         printDetails();
         this.status = OrderStatus.UNPAID;
         return true;
@@ -120,11 +126,14 @@ public class Order {
         System.out.println("Duration (hr) : " + calculateDuration());
 
         System.out.println("-- Billing details --");
-        System.out.println("Delivery fee  : Rp" + deliveryFee);
+        System.out.println("Delivery fee  : Rp" + shippingFee);
         System.out.println("Rent bill     : Rp" + calculatePrice());
         System.out.println("Total         : Rp" + subtotal);
         if (this.totalDiscount != 0)
             System.out.println("After promo   : Rp" + subtotal);
+            
+        if (this.cashBack != 0)
+            System.out.println("Cashback      : Rp" + cashBack);
 
         System.out.println();
     }
@@ -136,13 +145,13 @@ public class Order {
         if (this.renter instanceof Member) {
             Member member = (Member) renter;
             if (promo.isCustomerEligible(member) && promo.isMinimumPriceEligible(this)) {
-                this.totalDiscount += calculatePrice() * promo.totalDiscount();
-                this.totalDiscount += calculatePrice() * promo.totalCashback();
+                this.totalDiscount += promo.totalDiscount(this);
+                this.cashBack += promo.totalCashback(this);
                 result = true;
             }
 
             if (promo.isShippingDiscountEligible(this)) {
-                this.deliveryFee = this.deliveryFee * (1 - promo.calculateShippingDiscount());
+                this.shippingFee -= promo.calculateShippingDiscount(this);
                 result = true;
             }
         }
