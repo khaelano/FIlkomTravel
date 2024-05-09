@@ -91,13 +91,17 @@ public class Order {
     }
 
     public boolean checkOut() {
+        if (this.totalDiscount == 0) this.subtotal = calculatePrice() + deliveryFee;
+        printDetails();
         this.status = OrderStatus.UNPAID;
+        return true;
     }
 
     public void printDetails() {
         System.out.println("-- Invoice details --");
         System.out.println("Invoice date  :" + getInvoiceDate());
-        System.out.println("Invoice ID   : -");
+        if (status == OrderStatus.SUCCESSFUL)
+            System.out.println("Invoice ID   : -");
 
         System.out.println("-- Car Details -- ");
         System.out.println("Car brand     : " + rentedCar.brand);
@@ -114,7 +118,10 @@ public class Order {
         System.out.println("-- Billing details --");
         System.out.println("Delivery fee  : Rp" + deliveryFee);
         System.out.println("Rent bill     : Rp" + calculatePrice());
-        System.out.println("Total         : Rp" + (calculatePrice() + deliveryFee));
+        System.out.println("Total         : Rp" + subtotal);
+        if (this.totalDiscount != 0)
+            System.out.println("After promo   : Rp" + subtotal);
+
         System.out.println();
     }
 
@@ -135,6 +142,8 @@ public class Order {
                 result = true;
             }
         }
+
+        this.subtotal = calculatePrice() - totalDiscount;
 
         return result;
     }
