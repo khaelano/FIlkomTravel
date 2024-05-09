@@ -23,7 +23,7 @@ public abstract class User {
         counter++;
     }
 
-    public abstract boolean makeOrder(Car car);
+    public abstract boolean makeOrder(Car car, int quantity);
 
     public abstract boolean confirmPayment(int orderID);
 
