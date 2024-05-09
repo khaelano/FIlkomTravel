@@ -56,7 +56,7 @@ public class Member extends User {
                     order.getRentStartDate(),
                     order.getRentEndDate(),
                     order.calculateDuration(),
-                    order.calculateTotalCharges());
+                    order.getSubtotal());
         }
 
         System.out.println("-------------------------------------------------------------------------------------");

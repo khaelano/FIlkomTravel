@@ -21,6 +21,10 @@ public class Order {
     private OrderStatus status;
     private double subtotal;
 
+    public double getSubtotal() {
+        return subtotal;
+    }
+
     public Order(Car rentedCar, int quantity, User renter) {
         this.rentedCar = rentedCar;
         this.carQuantity = quantity;
