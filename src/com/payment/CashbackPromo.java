@@ -5,10 +5,8 @@ import java.time.LocalDate;
 import com.user.User;
 
 public class CashbackPromo extends Promotion{
-    private int promoCode;
     private String promoName;
-    private LocalDate mulai;
-    private LocalDate akhir;
+    
 
     
     public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir) {

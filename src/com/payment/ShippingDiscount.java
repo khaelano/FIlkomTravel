@@ -5,16 +5,11 @@ import java.time.LocalDate;
 import com.user.User;
 
 public class ShippingDiscount extends Promotion{
-    private int promoCode;
     private String promoName;
-    private LocalDate mulai;
-    private LocalDate akhir;
     
     public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir) {
-        this.promoCode = promoCode;
+        super(promoCode, mulai, akhir);
         this.promoName = promoName;
-        this.mulai = mulai;
-        this.akhir = akhir;
     }
 
     @Override
