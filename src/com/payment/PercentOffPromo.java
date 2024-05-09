@@ -4,33 +4,44 @@ import java.time.LocalDate;
 
 import com.user.*;
 
-public class PercentOffPromo extends Promotion{
+public class PercentOffPromo extends Promotion {
     private String promoName;
-    private double rateDiscount;
+    private double discountPercentage;
+    private int minimumPrice;
 
-    public PercentOffPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
+    public PercentOffPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double discountPercentage,
+            int minimumPrice) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
-        this.rateDiscount = rateDiscount;
+        this.discountPercentage = discountPercentage;
+        this.minimumPrice = minimumPrice;
     }
 
-    public double getRateDiscount() {
-        return rateDiscount;
+    public String getPromoName() {
+        return promoName;
+    }
+
+    public double getdiscountPercentage() {
+        return discountPercentage;
     }
 
     @Override
-    public boolean isCustomerEligible(User user) {
-        if () {
-            
+    public int compareTo(Promotion other) {
+        return Double.compare(this.discountPercentage, other.discountPercentage);
+    }
+
+    @Override
+    public boolean isCustomerEligible(Member member) {
+        if (member.getMembershipDuration() > 30) {
+            return true;
         }
         return false;
     }
 
     @Override
     public boolean isMinimumPriceEligible(Order order) {
-        final int BATAS = 1_000_000;
-        if (order.calulateCharges() >= BATAS) {
-            
+        if (order.calculatePrice() >= minimumPrice) {
+            return true;
         }
         return false;
     }
@@ -41,17 +52,22 @@ public class PercentOffPromo extends Promotion{
     }
 
     @Override
-    public int totalCashback() {
+    public int totalCashback(Order order) {
         return 0;
     }
 
     @Override
-    public int totalDiscount() {
-        return 0;
+    public int totalDiscount(Order order) {
+        if (isMinimumPriceEligible(order) == true) {
+            double potongan = order.calulateCharges() * discountPercentage;
+            return (int) potongan;
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public int calculateShippingDiscount() {
+    public int calculateShippingDiscount(Order order) {
         return 0;
     }
 }

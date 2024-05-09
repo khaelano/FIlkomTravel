@@ -2,34 +2,48 @@ package com.payment;
 
 import java.time.LocalDate;
 
-import com.user.User;
+import com.user.*;
 
 public class CashbackPromo extends Promotion{
     private String promoName;
-    private double rateDiscount;
+    private double cashbackPercentage;
+    private int minimumPrice;
     
-    public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
+    public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double cashbackPercentage, int minimumPrice) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
-        this.rateDiscount = rateDiscount;
-    }
-
-    public double getRateDiscount() {
-        return rateDiscount;
+        this.cashbackPercentage = cashbackPercentage;
+        this.minimumPrice = minimumPrice;
     }
 
     @Override
-    public int calculateShippingDiscount() {
+    public int compareTo(Promotion other) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public double getCashbackPercentage() {
+        return cashbackPercentage;
+    }
+
+    @Override
+    public int calculateShippingDiscount(Order order) {
         return 0;
     }
 
     @Override
-    public boolean isCustomerEligible(User user) {
+    public boolean isCustomerEligible(Member member) {
+        if (member.getMembershipDuration() > 30) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean isMinimumPriceEligible(Order order) {
+        if (order.calculatePrice() >= minimumPrice) {
+            return true;
+        }
         return false;
     }
 
@@ -39,35 +53,22 @@ public class CashbackPromo extends Promotion{
     }
 
     @Override
-    public int totalCashback() {
-        Order order;
-        final int BATAS_DUMMY = 1_000_000;
-        if (order.calulateCharges() >= BATAS_DUMMY) {
-            
-        } 
-        return 0;
+    public int totalCashback(Order order) {
+        if (isMinimumPriceEligible(order) == true) {
+            double cashback = order.calculatePrice() * cashbackPercentage;
+            return (int) cashback;
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public int totalDiscount() {
-        // TODO Auto-generated method stub
+    public int totalDiscount(Order order) {
         return 0;
-    }
-
-    public int getPromoCode() {
-        return promoCode;
     }
 
     public String getPromoName() {
         return promoName;
-    }
-
-    public LocalDate getMulai() {
-        return mulai;
-    }
-
-    public LocalDate getAkhir() {
-        return akhir;
     }
 
 }

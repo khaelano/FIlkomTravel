@@ -2,7 +2,7 @@ package com.payment;
 
 import java.time.LocalDate;
 
-public abstract class Promotion implements Applicable, Comparable {
+public abstract class Promotion implements Applicable, Comparable<Promotion> {
     protected int promoCode;
     protected LocalDate mulai;
     protected LocalDate akhir;
@@ -24,5 +24,6 @@ public abstract class Promotion implements Applicable, Comparable {
     public LocalDate getAkhir() {
         return akhir;
     }
-    
+
+    public abstract int compareTo(Promotion other);
 }

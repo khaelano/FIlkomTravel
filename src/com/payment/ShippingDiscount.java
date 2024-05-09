@@ -2,69 +2,74 @@ package com.payment;
 
 import java.time.LocalDate;
 
-import com.user.User;
+import com.user.*;
 
-public class ShippingDiscount extends Promotion{
+public class ShippingDiscount extends Promotion {
     private String promoName;
-    private double rateDiscount;
-    
-    public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
+    private double discountPercentage;
+    private int minimumShippingFee;
+
+    public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir,
+            double discountPercentage, int minimumShippingFee) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
-        this.rateDiscount = rateDiscount;
-    }
-
-    public double getRateDiscount() {
-        return rateDiscount;
+        this.discountPercentage = discountPercentage;
+        this.minimumShippingFee = minimumShippingFee;
     }
 
     @Override
-    public int calculateShippingDiscount() {
-        int totalShippingDiscount = 1000;
-        return totalShippingDiscount;
-    }
-
-    @Override
-    public boolean isCustomerEligible(User user) {
-        return false;
-    }
-
-    @Override
-    public boolean isMinimumPriceEligible(Order order) {
-        System.out.println("DUMMY");
-        return false;
-    }
-
-    @Override
-    public boolean isShippingDiscountEligible(Order order) {
-        System.out.println("DUMMY");
-        return false;
-    }
-
-    @Override
-    public int totalCashback() {
+    public int compareTo(Promotion other) {
+        // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public int totalDiscount() {
-        return 0;
-    }
-
-    public int getPromoCode() {
-        return promoCode;
     }
 
     public String getPromoName() {
         return promoName;
     }
 
-    public LocalDate getMulai() {
-        return mulai;
+    public double getdiscountPercentage() {
+        return discountPercentage;
     }
 
-    public LocalDate getAkhir() {
-        return akhir;
+    @Override
+    public int calculateShippingDiscount(Order order) {
+        if (isShippingDiscountEligible(order) == true) {
+            double potongan = order.getShippingFee() * discountPercentage;
+            return (int) potongan;
+        } else {
+            return 0;
+        }
     }
-    
+
+    @Override
+    public boolean isCustomerEligible(Member member) {
+        if (member.getMembershipDuration() > 30) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isMinimumPriceEligible(Order order) {
+        return false;
+    }
+
+    @Override
+    public boolean isShippingDiscountEligible(Order order) {
+        if (order.getShippingFee() > minimumShippingFee) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int totalCashback(Order order) {
+        return 0;
+    }
+
+    @Override
+    public int totalDiscount(Order order) {
+        return 0;
+    }
+
 }
