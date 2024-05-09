@@ -4,11 +4,11 @@ import java.time.LocalDate;
 
 import com.user.User;
 
-public class ShippingDiscount extends Promotion{
+public class CashbackPromo extends Promotion{
     private String promoName;
     private double rateDiscount;
     
-    public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
+    public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double rateDiscount) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
         this.rateDiscount = rateDiscount;
@@ -20,8 +20,7 @@ public class ShippingDiscount extends Promotion{
 
     @Override
     public int calculateShippingDiscount() {
-        int totalShippingDiscount = 1000;
-        return totalShippingDiscount;
+        return 0;
     }
 
     @Override
@@ -31,23 +30,27 @@ public class ShippingDiscount extends Promotion{
 
     @Override
     public boolean isMinimumPriceEligible(Order order) {
-        System.out.println("DUMMY");
         return false;
     }
 
     @Override
     public boolean isShippingDiscountEligible(Order order) {
-        System.out.println("DUMMY");
         return false;
     }
 
     @Override
     public int totalCashback() {
+        Order order;
+        final int BATAS_DUMMY = 1_000_000;
+        if (order.calulateCharges() >= BATAS_DUMMY) {
+            
+        } 
         return 0;
     }
 
     @Override
     public int totalDiscount() {
+        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -66,5 +69,5 @@ public class ShippingDiscount extends Promotion{
     public LocalDate getAkhir() {
         return akhir;
     }
-    
+
 }
