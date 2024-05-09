@@ -8,17 +8,27 @@ import com.car.*;
 import com.user.*;
 
 public class Order {
+    private static int counter;
     private LocalDateTime invoiceDate;
     private User renter;
+    private int orderID;
     private Car rentedCar;
+    private int carQuantity;
     private LocalDateTime rentStartDate;
     private LocalDateTime rentEndDate;
+    private double deliveryFee;
+    private double totalDiscount;
+    private OrderStatus status;
+    private double subtotal;
 
-    public Order(User renter, Car rentedCar) {
-        this.renter = renter;
+    public Order(Car rentedCar, int quantity, User renter) {
         this.rentedCar = rentedCar;
+        this.carQuantity = quantity;
+        this.renter = renter;
 
         this.invoiceDate = LocalDateTime.now();
+        this.orderID = counter;
+        counter++;
     }
 
     public void setRentStartDate(String formattedDateAndTime) {
@@ -59,12 +69,16 @@ public class Order {
         return this.invoiceDate.format(formatter);
     }
 
-    public String getRenterName() {
-        return this.renter.name;
-    }
-
     public Car getRentedCar() {
         return this.rentedCar;
+    }
+
+    public int getCarQuantity() {
+        return this.carQuantity;
+    }
+
+    public int getOrderID() {
+        return this.orderID;
     }
 
     public double calculateDuration() {
@@ -72,39 +86,61 @@ public class Order {
         return Math.ceil(duration.getSeconds() / 3600);
     }
 
-    public int calculateTotalCharges() {
-        double durationInHour = calculateDuration();
-        return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentalFee() * (1 - this.renter.getDiscount()));
+    public double calculatePrice() {
+        return this.rentedCar.getRentalFee() * (calculateDuration()/4);
     }
 
-    public void printBill() {
-        Car car = this.rentedCar;
+    public boolean checkOut() {
+        this.status = OrderStatus.UNPAID;
+    }
 
-        System.out.println("################################################");
-        System.out.println("########          Payment Bill          ########");
-        System.out.println("################################################");
-        System.out.println("Invoice date: " + getInvoiceDate());
-        System.out.println("Renter Name: " + this.renter.name);
-        System.out.println("------------------------------------------------");
-        System.out.println("--------------- Rented Car Details -------------");
-        System.out.printf("%-21s: %s\n", "Brand Name", car.brand);
-        System.out.printf("%-21s: %s\n", "Model", car.model);
-        System.out.printf("%-21s: %s\n", "Color", car.color);
-        System.out.printf("%-21s: %s\n", "License Plate Number", car.getLicensePlate());
-        System.out.printf("%-21s: %b\n", "include driver?", car.includeDriver);
-        System.out.printf("%-21s: %s person\n", "Capacity", car.getCapacity());
-        System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.getRentalFee());
-        System.out.println("------------------------------------------------");
-        System.out.println("------------------ Rent Details ----------------");
-        System.out.printf("%-20s: %s\n", "Start Date", getRentStartDate());
-        System.out.printf("%-20s: %s\n", "End Date", getRentEndDate());
-        System.out.printf("%-20s: %s hour\n", "Duration", Double.toString(calculateDuration()));
-        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.getRentalFee() * Math.ceil(calculateDuration()/6)));
-        System.out.printf("%-30s: Rp. %s\n", "Total Charges (after discount)", Integer.toString(calculateTotalCharges()));
-        System.out.println("################################################");
-        System.out.println("######  Thank you for using FilkomTravel!  #####");
-        System.out.println("######    We hope to see you next time!    #####");
-        System.out.println("################################################");
+    public void printDetails() {
+        System.out.println("-- Invoice details --");
+        System.out.println("Invoice date  :" + getInvoiceDate());
+        System.out.println("Invoice ID   : -");
+
+        System.out.println("-- Car Details -- ");
+        System.out.println("Car brand     : " + rentedCar.brand);
+        System.out.println("Car model     : " + rentedCar.model);
+        System.out.println("Car capacity  : " + rentedCar.getCapacity());
+        System.out.println("Rental fee    : Rp" + rentedCar.getRentalFee() + " /6hr");
+        System.out.println("Car quantity  : " + carQuantity);
+
+        System.out.println("-- Rent details --");
+        System.out.println("Start date    : " + getRentStartDate());
+        System.out.println("End date      : " + getRentEndDate());
+        System.out.println("Duration (hr) : " + calculateDuration());
+
+        System.out.println("-- Billing details --");
+        System.out.println("Delivery fee  : Rp" + deliveryFee);
+        System.out.println("Rent bill     : Rp" + calculatePrice());
+        System.out.println("Total         : Rp" + (calculatePrice() + deliveryFee));
         System.out.println();
+    }
+
+    public boolean applyPromo(Promotion promo) {
+        if (promo == null) return false;
+        boolean result = false;
+
+        if (this.renter instanceof Member) {
+            Member member = (Member) renter;
+            if (promo.isCustomerEligible(member) && promo.isMinimumPriceEligible(this)) {
+                this.totalDiscount += calculatePrice() * promo.getDiscount();
+                this.totalDiscount += calculatePrice() * promo.getCashback();
+                result = true;
+            }
+
+            if (promo.isShippingFeeEligible(this)) {
+                this.deliveryFee = this.deliveryFee * (1 - promo.getShippingDiscount());
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+    public boolean pay() {
+        this.status = OrderStatus.SUCCESSFUL;
+        return true;
     }
 }
