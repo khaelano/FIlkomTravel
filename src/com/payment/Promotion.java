@@ -3,6 +3,11 @@ package com.payment;
 import java.time.LocalDate;
 
 public abstract class Promotion implements Applicable, Comparable<Promotion> {
+    public String getPromoName() {
+        return promoName;
+    }
+
+    protected String promoName;
     protected int promoCode;
     protected LocalDate mulai;
     protected LocalDate akhir;

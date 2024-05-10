@@ -6,7 +6,7 @@ public class Car {
     public String color;
     public boolean includeDriver;
     protected String licensePlate;
-    protected int rentalFee;
+    protected long rentalFee;
     protected int capacity;
 
     public Car(String licensePlate) {
@@ -17,7 +17,7 @@ public class Car {
         return this.licensePlate;
     }
 
-    public int getRentalFee() {
+    public long getRentalFee() {
         return rentalFee;
     }
 

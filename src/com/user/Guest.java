@@ -4,15 +4,15 @@ import com.payment.Order;
 import com.car.Car;
 
 public class Guest extends User {
-    public Guest(String firstName, String lastName, int idNum) {
+    public Guest(String firstName, String lastName) {
         super(firstName, lastName);
     }
 
-    public boolean makeOrder(Car rentedCar, int quantity) {
+    public Order makeOrder(Car rentedCar, int quantity) {
         Order order = new Order(rentedCar, quantity, this);
         this.orders.put(order.getOrderID(), order);
 
-        return true;
+        return order;
     }
 
     public boolean confirmPayment(int orderID) {

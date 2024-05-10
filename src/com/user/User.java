@@ -11,6 +11,11 @@ public abstract class User {
     private int idNum;
     public int phoneNum;
     public String address;
+    
+    public HashMap<Integer, Order> getOrders() {
+        return orders;
+    }
+
     protected HashMap<Integer, Order> orders;
 
     boolean isOrdering;
@@ -23,7 +28,7 @@ public abstract class User {
         counter++;
     }
 
-    public abstract boolean makeOrder(Car car, int quantity);
+    public abstract Order makeOrder(Car car, int quantity);
 
     public abstract boolean confirmPayment(int orderID);
 

@@ -18,11 +18,6 @@ public class Order {
     private LocalDateTime rentEndDate;
     private double shippingFee;
     private double cashBack;
-
-    public double getShippingFee() {
-        return shippingFee;
-    }
-
     private double totalDiscount;
     private OrderStatus status;
     private double subtotal;
@@ -35,6 +30,7 @@ public class Order {
         this.rentedCar = rentedCar;
         this.carQuantity = quantity;
         this.renter = renter;
+        this.shippingFee = quantity * 100_000;
 
         this.invoiceDate = LocalDateTime.now();
         this.orderID = counter;
@@ -91,6 +87,14 @@ public class Order {
         return this.orderID;
     }
 
+    public double getShippingFee() {
+        return shippingFee;
+    }
+
+    public String getCarName() {
+        return rentedCar.model;
+    }
+
     public double calculateDuration() {
         Duration duration = Duration.between(rentStartDate, rentEndDate);
         return Math.ceil(duration.getSeconds() / 3600);
@@ -102,38 +106,38 @@ public class Order {
 
     public boolean checkOut() {
         if (this.totalDiscount == 0) this.subtotal = calculatePrice() + shippingFee;
-        printDetails();
         this.status = OrderStatus.UNPAID;
         return true;
     }
 
     public void printDetails() {
-        System.out.println("-- Invoice details --");
+        System.out.println("---- Invoice details ----");
         System.out.println("Invoice date  :" + getInvoiceDate());
         if (status == OrderStatus.SUCCESSFUL)
             System.out.println("Invoice ID   : -");
 
-        System.out.println("-- Car Details -- ");
+        System.out.println("---- Car Details ---- ");
         System.out.println("Car brand     : " + rentedCar.brand);
         System.out.println("Car model     : " + rentedCar.model);
         System.out.println("Car capacity  : " + rentedCar.getCapacity());
         System.out.println("Rental fee    : Rp" + rentedCar.getRentalFee() + " /6hr");
         System.out.println("Car quantity  : " + carQuantity);
 
-        System.out.println("-- Rent details --");
+        System.out.println("---- Rent details ----");
         System.out.println("Start date    : " + getRentStartDate());
         System.out.println("End date      : " + getRentEndDate());
-        System.out.println("Duration (hr) : " + calculateDuration());
+        System.out.printf("Duration (hr) : %d\n", (int) calculateDuration());
 
-        System.out.println("-- Billing details --");
-        System.out.println("Delivery fee  : Rp" + shippingFee);
-        System.out.println("Rent bill     : Rp" + calculatePrice());
-        System.out.println("Total         : Rp" + subtotal);
+        System.out.println("---- Billing details ----");
+        System.out.printf("Delivery fee  : Rp%d\n", (long) shippingFee);
+        System.out.printf("Rent bill     : Rp%d\n", (long) calculatePrice());
+        if (this.subtotal != 0)
+            System.out.printf("Total         : Rp%d\n", (long) subtotal);
         if (this.totalDiscount != 0)
-            System.out.println("After promo   : Rp" + subtotal);
+            System.out.printf("After promo   : Rp%d\n", (long) subtotal);
             
         if (this.cashBack != 0)
-            System.out.println("Cashback      : Rp" + cashBack);
+            System.out.printf("Cashback      : Rp%d\n", (long) cashBack);
 
         System.out.println();
     }

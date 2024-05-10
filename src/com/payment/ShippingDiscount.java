@@ -5,13 +5,12 @@ import java.time.LocalDate;
 import com.user.*;
 
 public class ShippingDiscount extends Promotion {
-    private String promoName;
     private double discountPercentage;
-    private int minimumShippingFee;
+    private long minimumShippingFee;
     private Order order;
 
     public ShippingDiscount(int promoCode, String promoName, LocalDate mulai, LocalDate akhir,
-            double discountPercentage, int minimumShippingFee) {
+            double discountPercentage, long minimumShippingFee) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
         this.discountPercentage = discountPercentage;
@@ -35,10 +34,10 @@ public class ShippingDiscount extends Promotion {
     }
 
     @Override
-    public int calculateShippingDiscount() {
+    public long calculateShippingDiscount() {
         if (isShippingDiscountEligible(order) == true) {
             double potongan = order.getShippingFee() * discountPercentage;
-            return (int) potongan;
+            return (long) potongan;
         } else {
             return 0;
         }
@@ -66,12 +65,12 @@ public class ShippingDiscount extends Promotion {
     }
 
     @Override
-    public int totalCashback() {
+    public long totalCashback() {
         return 0;
     }
 
     @Override
-    public int totalDiscount() {
+    public long totalDiscount() {
         return 0;
     }
 

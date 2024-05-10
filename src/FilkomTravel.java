@@ -1,10 +1,12 @@
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Set;
+import java.time.LocalDate;
 
-import com.*;
 import com.car.*;
-import com.payment.Order;
+import com.payment.*;
 import com.user.*;
 
 
@@ -25,7 +27,7 @@ public class FilkomTravel {
     public static void welcomeScreen() {
         while (true) {
             System.out.println("Welcome to Filkom Travel!!");
-            System.out.print("Do you want to log in as member and get 10% discount? [y/n] ");
+            System.out.print("Do you want to log in as member? [y/n] ");
             String selection = S.nextLine();
 
             switch (selection) {
@@ -52,6 +54,36 @@ public class FilkomTravel {
     }
 
     private static Order takeOrder(User user) {
+        LocalDate promoStartDate = LocalDate.of(2024, 1, 1);
+        LocalDate promoEndDate = LocalDate.of(2024, 12, 31);
+        PercentOffPromo discount = new PercentOffPromo(
+            192910, 
+            "Diskon Full Senyum", 
+            promoStartDate, 
+            promoEndDate, 
+            0.5, 
+            400_000
+        );
+
+        CashbackPromo cashback = new CashbackPromo(
+            199368, 
+            "Cashback Ceria", 
+            promoStartDate, 
+            promoEndDate, 
+            0.3, 
+            1_000_000
+        );
+
+        ShippingDiscount shippingDiscount = new ShippingDiscount(
+            123093, 
+            "Penyelamat Ongkir", 
+            promoStartDate, 
+            promoEndDate, 
+            0.5, 
+            300_000
+        );
+
+
         System.out.println("-------------------------------------------------------------------------------------");
         System.out.println("|                                     Order Mode                                    |");
         System.out.println("-------------------------------------------------------------------------------------");
@@ -59,11 +91,10 @@ public class FilkomTravel {
         // Print all available cars .....
         printCars();
 
-        System.out.printf("Please choose your car [0-%d] : ", carDB.size() - 1);
+        System.out.printf("Please choose your car [0-%d]  : ", carDB.size() - 1);
         Car car = carDB.get(S.nextInt());
-        S.nextLine();
-        System.out.print("Do you want to hire a driver? (no additional charges) [y/n] ");
-        car.includeDriver = S.nextLine().equals("y") ? true : false;
+        System.out.print("Enter the quantity for the car : ");
+        int qty = S.nextInt(); S.nextLine();
 
         System.out.println("---------------------------- Set rent start and end date ----------------------------");
         System.out.println("The time formatting is [dd/MM/yyyy HH:mm]");
@@ -74,18 +105,116 @@ public class FilkomTravel {
         String endDate = S.nextLine();
         System.out.println();
 
-        Order order = user.order(car);
+        Order order = user.makeOrder(car, qty);
         order.setRentStartDate(startDate);
         order.setRentEndDate(endDate);
+
+        if (user instanceof Member) {
+            PriorityQueue<Promotion> promotion = new PriorityQueue<>();
+            if (discount.isCustomerEligible((Member) user)) {
+                if (discount.isMinimumPriceEligible(order)) {
+                    discount.setOrder(order);
+                    promotion.add(discount);
+                }
+
+                if (cashback.isMinimumPriceEligible(order)) {
+                    cashback.setOrder(order);
+                    promotion.add(cashback);
+                }
+
+                if (shippingDiscount.isShippingDiscountEligible(order)) {
+                    discount.setOrder(order);
+                    promotion.add(shippingDiscount);
+                }
+            }
+
+            if (!promotion.isEmpty()) {
+                System.out.println("Please choose what promo you want to use: ");
+
+                int c = 1;
+                System.out.println("0. Skip promo");
+                for (Promotion pr : promotion) {
+                    long totalPromo = pr.calculateShippingDiscount() + pr.totalCashback() + pr.totalDiscount();
+                    System.out.printf("%d. %s - %d\n", c, pr.getPromoName(), totalPromo);
+                }
+
+                System.out.printf("Select promo : [%d - %d] ", 1, promotion.size());
+                int selection = S.nextInt(); S.nextLine();
+
+                Promotion appliedPromo = null;
+                for (int i = 0; i < selection; i++) {
+                    appliedPromo = promotion.remove();
+                }
+
+                if (order.applyPromo(appliedPromo)) {
+                    System.out.println("Promo applied!");
+                } else {
+                    System.out.println("Promo isn't applied");
+                }
+            }
+        }
+        System.out.println("Order creation successful!");
+        System.out.println("To confirm your payment, please select the check out menu.");
 
         return order;
     }
 
+    private static void checkOut(User user) {
+        // TODO implements check out method
+        HashMap<Integer, Order> orders  = user.getOrders();
+        Set<Integer> keyset = orders.keySet();
+
+        if (orders.isEmpty()) {
+            System.out.println("There are no pending order");
+            System.out.println("Returning back...");
+            return;
+        }
+        
+        System.out.println("No.  Model           Original price");
+        for (Integer integer : keyset) {
+            Order order = orders.get(integer);
+            System.out.printf("%-4d %-15s %-13d\n", integer, order.getCarName(), (int) order.calculatePrice());
+        }
+        System.out.print("Select which order you want to check out : ");
+        int selection = S.nextInt(); S.nextLine();
+
+        Order order = orders.remove(selection);
+        order.checkOut();
+        order.printDetails();
+
+        order.pay();
+        System.out.println("Payment successful!");
+    }
+
     private static void guestMode() {
         User guest = guestRegistration();
-        Order order = takeOrder(guest);
 
-        order.printBill();
+        main:
+        while (true) {
+            System.out.println("Please select the menu: ");
+            System.out.println("0. Rent a Car");
+            System.out.println("1. Check out order");
+            System.out.println("2. Log out");
+            System.out.print("Selection [0-2] ");
+
+            String selection = S.nextLine();
+            switch (selection) {
+                case "0":
+                    Order order = takeOrder(guest);
+                    break;
+
+                case "1":
+                    checkOut(guest);
+                    break;
+
+                case "2":
+                    break main;
+            
+                default:
+                    break;
+            }
+            
+        }
     }
 
     private static void memberMode() {
@@ -108,26 +237,37 @@ public class FilkomTravel {
                 return;
         }
 
-        System.out.println("Please Select the Menu:");
-        System.out.println("0. Rent a Car");
-        System.out.println("1. Print Order History");
-        System.out.print("Selection [0-1] ");
-        selection = S.nextLine();
+        menu:
+        while (true) {
+            System.out.println("Please Select the Menu:");
+            System.out.println("0. Rent a Car");
+            System.out.println("1. Print Order History");
+            System.out.println("2. Check out order");
+            System.out.println("3. Log out");
+            System.out.print("Selection [0-3] ");
+            selection = S.nextLine();
 
-        switch (selection) {
-            case "0":
-                Order order = takeOrder(member);
-                order.printBill();
-                break;
-        
-            case "1":
-                member.printHistory();
-                break;
+            switch (selection) {
+                case "0":
+                    Order order = takeOrder(member);
+                    break;
+            
+                case "1":
+                    member.printHistory();
+                    break;
 
-            default:
-                System.out.println("Please input a valid value");
-                System.out.println();
-                return;
+                case "2":
+                    checkOut(member);
+                    break;
+                
+                case "3":
+                    break menu;
+
+                default:
+                    System.out.println("Please input a valid value");
+                    System.out.println();
+                    return;
+            }
         }
 
         member.logout();
@@ -148,13 +288,16 @@ public class FilkomTravel {
 
     private static User guestRegistration() {
         // Basic user registration
-        System.out.print("Enter your name: ");
-        String name = S.nextLine();
-        System.out.print("Enter your identity number: ");
-        String identityNum = S.nextLine();
-        User guest = new User(name, identityNum);
+        System.out.print("Enter your first name: ");
+        String firstName = S.nextLine();
+        System.out.print("Enter your last name: ");
+        String lastName = S.nextLine();
+
+        Guest guest = new Guest(firstName, lastName);
+
         System.out.print("Enter your phone number: ");
-        guest.phoneNum = S.nextLine();
+        guest.phoneNum = S.nextInt(); S.nextLine();
+
         System.out.print("Enter your home address: ");
         guest.address = S.nextLine();
         System.out.println();
@@ -164,11 +307,11 @@ public class FilkomTravel {
 
     private static Member memberRegistration() {
         // Basic user registration
-        System.out.print("Enter your name: ");
-        String name = S.nextLine();
+        System.out.print("Enter your first name: ");
+        String firstName = S.nextLine();
 
-        System.out.print("Enter your identity number: ");
-        String identityNum = S.nextLine();
+        System.out.print("Enter your last name: ");
+        String lastName = S.nextLine();
 
         // Set the user credentials
         System.out.print("Enter your username: ");
@@ -177,11 +320,12 @@ public class FilkomTravel {
         System.out.print("Enter your password: ");
         String password = S.nextLine();
 
-        Member member = new Member(name, identityNum, username, password);
+        Member member = new Member(firstName, lastName);
+        member.register(username, password);
 
         // More user information registrarion
         System.out.print("Enter your phone number: ");
-        member.phoneNum = S.nextLine();
+        member.phoneNum = S.nextInt(); S.nextLine();
 
         System.out.print("Enter your home address: ");
         member.address = S.nextLine();
@@ -251,17 +395,16 @@ public class FilkomTravel {
 
     private static void printCars() {
         System.out.println("----------------------------- List of all available cars ----------------------------");
-        System.out.printf("| %-2s | %-10s | %-12s | %-13s | %-12s | %-6s | %-8s |\n", "N.", "Brand", "Model", "License Plate", "Rent Fee", "Color", "Capacity");
+        System.out.printf("| %-2s | %-10s | %-12s | %-12s | %-6s | %-8s |\n", "N.", "Brand", "Model", "Rent Fee", "Color", "Capacity");
         System.out.println("-------------------------------------------------------------------------------------");
         
         for (int i = 0; i < carDB.size(); i++) {
             Car car = carDB.get(i);
             System.out.printf(
-                "| %-2d | %-10s | %-12s | %-13s | Rp. %-8s | %-6s | %-8s |\n", 
+                "| %-2d | %-10s | %-12s | Rp. %-8s | %-6s | %-8s |\n", 
                 i, 
                 car.brand, 
                 car.model, 
-                car.getLicensePlate(), 
                 car.getRentalFee(), 
                 car.color, 
                 car.getCapacity()

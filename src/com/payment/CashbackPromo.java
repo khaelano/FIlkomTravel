@@ -5,11 +5,10 @@ import java.time.LocalDate;
 import com.user.*;
 
 public class CashbackPromo extends Promotion{
-    private String promoName;
     private double cashbackPercentage;
-    private int minimumPrice;
+    private long minimumPrice;
     
-    public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double cashbackPercentage, int minimumPrice) {
+    public CashbackPromo(int promoCode, String promoName, LocalDate mulai, LocalDate akhir, double cashbackPercentage, long minimumPrice) {
         super(promoCode, mulai, akhir);
         this.promoName = promoName;
         this.cashbackPercentage = cashbackPercentage;
@@ -30,7 +29,7 @@ public class CashbackPromo extends Promotion{
     }
 
     @Override
-    public int calculateShippingDiscount() {
+    public long calculateShippingDiscount() {
         return 0;
     }
 
@@ -56,17 +55,17 @@ public class CashbackPromo extends Promotion{
     }
 
     @Override
-    public int totalCashback() {
+    public long totalCashback() {
         if (isMinimumPriceEligible(order) == true) {
             double cashback = order.calculatePrice() * cashbackPercentage;
-            return (int) cashback;
+            return (long) cashback;
         } else {
             return 0;
         }
     }
 
     @Override
-    public int totalDiscount() {
+    public long totalDiscount() {
         return 0;
     }
 

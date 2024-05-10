@@ -17,6 +17,7 @@ public class Member extends User {
     public Member(String firstName, String lastName) {
         super(firstName, lastName);
         this.loggedIn = true;
+        this.joinDate = LocalDate.now();
 
         this.orderHistory = new ArrayList<>();
     }
@@ -74,11 +75,11 @@ public class Member extends User {
     }
 
     @Override
-    public boolean makeOrder(Car car, int quantity) {
+    public Order makeOrder(Car car, int quantity) {
         Order order = new Order(car, quantity, this);
         orders.put(order.getOrderID(), order);
 
-        return true;
+        return order;
     }
 
     @Override
