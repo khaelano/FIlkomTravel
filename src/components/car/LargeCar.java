@@ -1,4 +1,4 @@
-package com.car;
+package components.car;
 
 public class LargeCar extends Car {
     public LargeCar(String licensePlate) {

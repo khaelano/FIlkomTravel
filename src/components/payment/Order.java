@@ -1,11 +1,12 @@
-package com.payment;
+package components.payment;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.Duration;
 
-import com.car.*;
-import com.user.*;
+import components.car.*;
+import components.user.*;
+
+import java.time.Duration;
 
 public class Order {
     private static int counter;

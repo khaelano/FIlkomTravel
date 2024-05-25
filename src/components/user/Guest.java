@@ -1,7 +1,7 @@
-package com.user;
+package components.user;
 
-import com.payment.Order;
-import com.car.Car;
+import components.car.Car;
+import components.payment.Order;
 
 public class Guest extends User {
     public Guest(String firstName, String lastName) {

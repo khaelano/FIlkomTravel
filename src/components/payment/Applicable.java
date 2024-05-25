@@ -1,6 +1,6 @@
-package com.payment;
+package components.payment;
 
-import com.user.*;
+import components.user.*;
 
 public interface Applicable {
     public boolean isCustomerEligible(Member member);

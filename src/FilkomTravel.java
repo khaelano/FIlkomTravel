@@ -3,11 +3,12 @@ import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
-import java.time.LocalDate;
 
-import com.car.*;
-import com.payment.*;
-import com.user.*;
+import components.car.*;
+import components.payment.*;
+import components.user.*;
+
+import java.time.LocalDate;
 
 
 public class FilkomTravel {

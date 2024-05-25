@@ -1,11 +1,11 @@
-package com.user;
+package components.user;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.car.Car;
-import com.payment.Order;
+import components.car.Car;
+import components.payment.Order;
 
 public class Member extends User {
     private String username;
