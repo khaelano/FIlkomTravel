@@ -1,3 +1,10 @@
+/*
+ * 235150200111051 Khaelano Abroor Maulana
+ * 235150200111057 Arza Marevi Bangun
+ * 235150207111058 Muhammad Lutfi Aziz
+ * 235150207111059 Nabiel Tatra Edy Firdaus
+ */
+
 package components.payment;
 
 import java.time.LocalDate;
@@ -9,14 +16,14 @@ public abstract class Promotion implements Applicable, Comparable<Promotion> {
 
     protected String promoName;
     protected int promoCode;
-    protected LocalDate mulai;
-    protected LocalDate akhir;
+    protected LocalDate promoStartDate;
+    protected LocalDate promoEndDate;
     protected Order order;
     
-    public Promotion(int promoCode, LocalDate mulai, LocalDate akhir) {
+    public Promotion(int promoCode, LocalDate startDate, LocalDate endDate) {
         this.promoCode = promoCode;
-        this.mulai = mulai;
-        this.akhir = akhir;
+        this.promoStartDate = startDate;
+        this.promoEndDate = endDate;
     }
 
     public abstract boolean setOrder(Order order);
@@ -25,12 +32,12 @@ public abstract class Promotion implements Applicable, Comparable<Promotion> {
         return promoCode;
     }
 
-    public LocalDate getMulai() {
-        return mulai;
+    public LocalDate getPromoStartDate() {
+        return promoStartDate;
     }
 
-    public LocalDate getAkhir() {
-        return akhir;
+    public LocalDate getPromoEndDate() {
+        return promoEndDate;
     }
 
     public void resetOrder() {
