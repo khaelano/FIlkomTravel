@@ -1,8 +1,9 @@
-package com.user;
+package components.user;
 
-import com.car.Car;
-import com.payment.Order;
 import java.util.HashMap;
+
+import components.car.Car;
+import components.payment.Order;
 
 public abstract class User {
     private static int counter;

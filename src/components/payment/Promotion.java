@@ -1,4 +1,4 @@
-package com.payment;
+package components.payment;
 
 import java.time.LocalDate;
 
