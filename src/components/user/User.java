@@ -13,35 +13,31 @@ import components.car.Car;
 import components.payment.Order;
 
 public abstract class User {
-    private static int counter;
-    private String firstName;
-    private String lastName;
-    private int idNum;
-    public int phoneNum;
-    public String address;
-    
-    public HashMap<Integer, Order> getOrders() {
-        return orders;
-    }
-
+    private String userID;
+    private String firstName, lastName;
+    protected boolean isOrdering;
+    protected long balance;
     protected HashMap<Integer, Order> orders;
-
-    boolean isOrdering;
-
-    public User(String firstName, String lastName) {
+    
+    public User(
+        String userID,
+        String firstName, 
+        String lastName,
+        long initialBalance
+    ) {
+        this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.idNum = counter;
+        this.balance = initialBalance;
         this.orders = new HashMap<>();
-        counter++;
     }
 
     public abstract Order makeOrder(Car car, int quantity);
 
     public abstract boolean confirmPayment(int orderID);
 
-    public int getIdNum() {
-        return this.idNum;
+    public String getUserID() {
+        return this.userID;
     }
 
     public String getFirstName() {
@@ -55,4 +51,9 @@ public abstract class User {
     public String getFullName() {
         return lastName != null ? firstName + " " + lastName : firstName;
     }
+
+    public HashMap<Integer, Order> getOrders() {
+        return orders;
+    }
+
 }

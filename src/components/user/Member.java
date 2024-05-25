@@ -21,10 +21,16 @@ public class Member extends User {
     private ArrayList<Order> orderHistory;
     private LocalDate joinDate;
 
-    public Member(String firstName, String lastName) {
-        super(firstName, lastName);
+    public Member(
+        String userID,
+        String firstName, 
+        String lastName, 
+        LocalDate joinDate, 
+        long initialBalance
+    ) {
+        super(userID, firstName, lastName, initialBalance);
         this.loggedIn = true;
-        this.joinDate = LocalDate.now();
+        this.joinDate = joinDate;
 
         this.orderHistory = new ArrayList<>();
     }
