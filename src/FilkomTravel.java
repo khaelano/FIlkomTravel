@@ -1,8 +1,14 @@
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Set;
+import java.time.LocalDate;
+
+import com.car.*;
+import com.payment.*;
+import com.user.*;
+
 
 public class FilkomTravel {
     private static HashMap<String, Member> memberDB;
@@ -11,12 +17,17 @@ public class FilkomTravel {
 
     public static void main(String[] args) throws Exception {
         memberDB = new HashMap<>();
-        carDB = carInitialization();
+        carDB = initializeCars();
         S = new Scanner(System.in);
 
+        welcomeScreen();
+
+    }
+
+    public static void welcomeScreen() {
         while (true) {
             System.out.println("Welcome to Filkom Travel!!");
-            System.out.print("Do you want to log in as member and get 10% discount? [y/n] ");
+            System.out.print("Do you want to log in as member? [y/n] ");
             String selection = S.nextLine();
 
             switch (selection) {
@@ -32,10 +43,47 @@ public class FilkomTravel {
                     System.out.println();
                     return;
             }
+
+            System.out.print("Do you want to continue? [y/n] ");
+            selection = S.nextLine();
+            if (selection.equals("n")) {
+                System.out.println("Thank you for using Filkom Travel");
+                break;
+            }
         }
     }
 
     private static Order takeOrder(User user) {
+        LocalDate promoStartDate = LocalDate.of(2024, 1, 1);
+        LocalDate promoEndDate = LocalDate.of(2024, 12, 31);
+        PercentOffPromo discount = new PercentOffPromo(
+            192910, 
+            "Diskon Full Senyum", 
+            promoStartDate, 
+            promoEndDate, 
+            0.5, 
+            400_000
+        );
+
+        CashbackPromo cashback = new CashbackPromo(
+            199368, 
+            "Cashback Ceria", 
+            promoStartDate, 
+            promoEndDate, 
+            0.3, 
+            1_000_000
+        );
+
+        ShippingDiscount shippingDiscount = new ShippingDiscount(
+            123093, 
+            "Penyelamat Ongkir", 
+            promoStartDate, 
+            promoEndDate, 
+            0.5, 
+            300_000
+        );
+
+
         System.out.println("-------------------------------------------------------------------------------------");
         System.out.println("|                                     Order Mode                                    |");
         System.out.println("-------------------------------------------------------------------------------------");
@@ -43,11 +91,10 @@ public class FilkomTravel {
         // Print all available cars .....
         printCars();
 
-        System.out.printf("Please choose your car [0-%d] : ", carDB.size() - 1);
+        System.out.printf("Please choose your car [0-%d]  : ", carDB.size() - 1);
         Car car = carDB.get(S.nextInt());
-        S.nextLine();
-        System.out.print("Do you want to hire a driver? (no additional charges) [y/n] ");
-        car.includeDriver = S.nextLine().equals("y") ? true : false;
+        System.out.print("Enter the quantity for the car : ");
+        int qty = S.nextInt(); S.nextLine();
 
         System.out.println("---------------------------- Set rent start and end date ----------------------------");
         System.out.println("The time formatting is [dd/MM/yyyy HH:mm]");
@@ -58,19 +105,116 @@ public class FilkomTravel {
         String endDate = S.nextLine();
         System.out.println();
 
-        Order order = user.order(car);
+        Order order = user.makeOrder(car, qty);
         order.setRentStartDate(startDate);
-        order.setRentEndtDate(endDate);
+        order.setRentEndDate(endDate);
+
+        if (user instanceof Member) {
+            PriorityQueue<Promotion> promotion = new PriorityQueue<>();
+            if (discount.isCustomerEligible((Member) user)) {
+                if (discount.isMinimumPriceEligible(order)) {
+                    discount.setOrder(order);
+                    promotion.add(discount);
+                }
+
+                if (cashback.isMinimumPriceEligible(order)) {
+                    cashback.setOrder(order);
+                    promotion.add(cashback);
+                }
+
+                if (shippingDiscount.isShippingDiscountEligible(order)) {
+                    discount.setOrder(order);
+                    promotion.add(shippingDiscount);
+                }
+            }
+
+            if (!promotion.isEmpty()) {
+                System.out.println("Please choose what promo you want to use: ");
+
+                int c = 1;
+                System.out.println("0. Skip promo");
+                for (Promotion pr : promotion) {
+                    long totalPromo = pr.calculateShippingDiscount() + pr.totalCashback() + pr.totalDiscount();
+                    System.out.printf("%d. %s - %d\n", c, pr.getPromoName(), totalPromo);
+                }
+
+                System.out.printf("Select promo : [%d - %d] ", 1, promotion.size());
+                int selection = S.nextInt(); S.nextLine();
+
+                Promotion appliedPromo = null;
+                for (int i = 0; i < selection; i++) {
+                    appliedPromo = promotion.remove();
+                }
+
+                if (order.applyPromo(appliedPromo)) {
+                    System.out.println("Promo applied!");
+                } else {
+                    System.out.println("Promo isn't applied");
+                }
+            }
+        }
+        System.out.println("Order creation successful!");
+        System.out.println("To confirm your payment, please select the check out menu.");
 
         return order;
     }
 
-    private static void guestMode() {
-        // Unfinished
-        User guest = guestRegistration();
-        Order order = takeOrder(guest);
+    private static void checkOut(User user) {
+        // TODO implements check out method
+        HashMap<Integer, Order> orders  = user.getOrders();
+        Set<Integer> keyset = orders.keySet();
 
-        order.printBill();
+        if (orders.isEmpty()) {
+            System.out.println("There are no pending order");
+            System.out.println("Returning back...");
+            return;
+        }
+        
+        System.out.println("No.  Model           Original price");
+        for (Integer integer : keyset) {
+            Order order = orders.get(integer);
+            System.out.printf("%-4d %-15s %-13d\n", integer, order.getCarName(), (int) order.calculatePrice());
+        }
+        System.out.print("Select which order you want to check out : ");
+        int selection = S.nextInt(); S.nextLine();
+
+        Order order = orders.remove(selection);
+        order.checkOut();
+        order.printDetails();
+
+        order.pay();
+        System.out.println("Payment successful!");
+    }
+
+    private static void guestMode() {
+        User guest = guestRegistration();
+
+        main:
+        while (true) {
+            System.out.println("Please select the menu: ");
+            System.out.println("0. Rent a Car");
+            System.out.println("1. Check out order");
+            System.out.println("2. Log out");
+            System.out.print("Selection [0-2] ");
+
+            String selection = S.nextLine();
+            switch (selection) {
+                case "0":
+                    Order order = takeOrder(guest);
+                    break;
+
+                case "1":
+                    checkOut(guest);
+                    break;
+
+                case "2":
+                    break main;
+            
+                default:
+                    break;
+            }
+            
+        }
     }
 
     private static void memberMode() {
@@ -93,26 +237,37 @@ public class FilkomTravel {
                 return;
         }
 
-        System.out.println("Please Select the Menu:");
-        System.out.println("0. Rent a Car");
-        System.out.println("1. Print Order History");
-        System.out.print("Selection [0-1] ");
-        selection = S.nextLine();
+        menu:
+        while (true) {
+            System.out.println("Please Select the Menu:");
+            System.out.println("0. Rent a Car");
+            System.out.println("1. Print Order History");
+            System.out.println("2. Check out order");
+            System.out.println("3. Log out");
+            System.out.print("Selection [0-3] ");
+            selection = S.nextLine();
 
-        switch (selection) {
-            case "0":
-                Order order = takeOrder(member);
-                order.printBill();
-                break;
-        
-            case "1":
-                member.printHistory();
-                break;
+            switch (selection) {
+                case "0":
+                    Order order = takeOrder(member);
+                    break;
+            
+                case "1":
+                    member.printHistory();
+                    break;
 
-            default:
-                System.out.println("Please input a valid value");
-                System.out.println();
-                return;
+                case "2":
+                    checkOut(member);
+                    break;
+                
+                case "3":
+                    break menu;
+
+                default:
+                    System.out.println("Please input a valid value");
+                    System.out.println();
+                    return;
+            }
         }
 
         member.logout();
@@ -133,13 +288,16 @@ public class FilkomTravel {
 
     private static User guestRegistration() {
         // Basic user registration
-        System.out.print("Enter your name: ");
-        String name = S.nextLine();
-        System.out.print("Enter your identity number: ");
-        String identityNum = S.nextLine();
-        User guest = new User(name, identityNum);
+        System.out.print("Enter your first name: ");
+        String firstName = S.nextLine();
+        System.out.print("Enter your last name: ");
+        String lastName = S.nextLine();
+
+        Guest guest = new Guest(firstName, lastName);
+
         System.out.print("Enter your phone number: ");
-        guest.phoneNum = S.nextLine();
+        guest.phoneNum = S.nextInt(); S.nextLine();
+
         System.out.print("Enter your home address: ");
         guest.address = S.nextLine();
         System.out.println();
@@ -149,19 +307,11 @@ public class FilkomTravel {
 
     private static Member memberRegistration() {
         // Basic user registration
-        System.out.print("Enter your name: ");
-        String name = S.nextLine();
+        System.out.print("Enter your first name: ");
+        String firstName = S.nextLine();
 
-        System.out.print("Enter your identity number: ");
-        String identityNum = S.nextLine();
-
-        Member member = new Member(name, identityNum);
-
-        System.out.print("Enter your phone number: ");
-        member.phoneNum = S.nextLine();
-
-        System.out.print("Enter your home address: ");
-        member.address = S.nextLine();
+        System.out.print("Enter your last name: ");
+        String lastName = S.nextLine();
 
         // Set the user credentials
         System.out.print("Enter your username: ");
@@ -170,94 +320,73 @@ public class FilkomTravel {
         System.out.print("Enter your password: ");
         String password = S.nextLine();
 
+        Member member = new Member(firstName, lastName);
+        member.register(username, password);
+
+        // More user information registrarion
+        System.out.print("Enter your phone number: ");
+        member.phoneNum = S.nextInt(); S.nextLine();
+
+        System.out.print("Enter your home address: ");
+        member.address = S.nextLine();
+
         System.out.println("Registration Successful!");
         System.out.println();
 
-        member.setCredentials(username, password);
         memberDB.put(username, member);
 
         return member;
     }
 
-    private static ArrayList<Car> carInitialization() {
+    private static ArrayList<Car> initializeCars() {
         ArrayList<Car> cars = new ArrayList<>();
         // Small Cars
-        SmallCar sc1 = new SmallCar();
+        SmallCar sc1 = new SmallCar("A 54 HEL");
         sc1.brand = "Honda";
         sc1.model = "Brio";
-        sc1.licensePlateNum = "A 54 HEL";
-        sc1.isIncludeDriver(false);
-        sc1.carCapacity();
-        sc1.getRentFee();
-        sc1.setCarUniqueCode(433);
+        sc1.includeDriver = false;
         sc1.color = "Red";
         cars.add(sc1);
     
-        SmallCar sc2 = new SmallCar();
+        SmallCar sc2 = new SmallCar("M 43 NG");
         sc2.brand = "Daihatsu";
         sc2.model = "Ayla";
-        sc2.licensePlateNum = "M 43 NG";
-        sc2.isIncludeDriver(true);
-        sc2.carCapacity();
-        sc2.getRentFee();
-        sc2.setCarUniqueCode(333);
+        sc2.includeDriver = true;
         sc2.color = "Blue";
         cars.add(sc2);
         
         // Medium Cars
-        MediumCar mc1 = new MediumCar();
+        MediumCar mc1 = new MediumCar("N 941 AM");
         mc1.brand = "Toyota";
         mc1.model = "Avanza";
-        mc1.licensePlateNum = "N 941 AM";
-        mc1.isIncludeDriver(true);
-        mc1.carCapacity();
-        mc1.getRentFee();
-        mc1.setCarUniqueCode(999);
+        mc1.includeDriver = true;
         mc1.color = "Silver";
         cars.add(mc1);
         
-        MediumCar mc2 = new MediumCar();
+        MediumCar mc2 = new MediumCar("N 4 KAM");
         mc2.brand = "Honda";
         mc2.model = "BRV";
-        mc2.licensePlateNum = "N 4 KAM";
-        mc2.isIncludeDriver(false);
-        mc2.carCapacity();
-        mc2.getRentFee();
-        mc2.setCarUniqueCode(215);
+        mc2.includeDriver = false;
         mc2.color = "Black";
         cars.add(mc2);
         
-        MediumCar mc3 = new MediumCar();
+        MediumCar mc3 = new MediumCar("N 45 GOR");
         mc3.brand = "Daihatsu";
         mc3.model = "Sigra";
-        mc3.licensePlateNum = "N 45 GOR";
-        mc3.isIncludeDriver(true);
-        mc3.carCapacity();
-        mc3.getRentFee();
-        mc3.setCarUniqueCode(468);
+        mc3.includeDriver = true;
         mc3.color = "Black";
         cars.add(mc3);
         
         // Large Cars
-        LargeCar lc1 = new LargeCar();
+        LargeCar lc1 = new LargeCar("B 490 NG");
         lc1.brand = "Toyota";
         lc1.model = "HiAce";
-        lc1.licensePlateNum = "B 490 NG";
-        lc1.isIncludeDriver(true);
-        lc1.carCapacity();
-        lc1.getRentFee();
-        lc1.setCarUniqueCode(222);
         lc1.color = "White";
         cars.add(lc1);
         
-        LargeCar lc2 = new LargeCar();
+        LargeCar lc2 = new LargeCar("B 444 AA");
         lc2.brand = "Isuzu";
         lc2.model = "Elf Microbus";
-        lc2.licensePlateNum = "B 444 AA";
-        lc2.isIncludeDriver(false);
-        lc2.carCapacity();
-        lc2.getRentFee();
-        lc2.setCarUniqueCode(122);
         lc2.color = "White";
         cars.add(lc2);
 
@@ -266,301 +395,22 @@ public class FilkomTravel {
 
     private static void printCars() {
         System.out.println("----------------------------- List of all available cars ----------------------------");
-        System.out.printf("| %-2s | %-10s | %-12s | %-13s | %-12s | %-6s | %-8s |\n", "N.", "Brand", "Model", "License Plate", "Rent Fee", "Color", "Capacity");
+        System.out.printf("| %-2s | %-10s | %-12s | %-12s | %-6s | %-8s |\n", "N.", "Brand", "Model", "Rent Fee", "Color", "Capacity");
         System.out.println("-------------------------------------------------------------------------------------");
         
         for (int i = 0; i < carDB.size(); i++) {
             Car car = carDB.get(i);
             System.out.printf(
-                "| %-2d | %-10s | %-12s | %-13s | Rp. %-8s | %-6s | %-8s |\n", 
+                "| %-2d | %-10s | %-12s | Rp. %-8s | %-6s | %-8s |\n", 
                 i, 
                 car.brand, 
                 car.model, 
-                car.licensePlateNum, 
-                car.getRentFee(), 
+                car.getRentalFee(), 
                 car.color, 
-                car.capacity
+                car.getCapacity()
             );
         }
         System.out.println("-------------------------------------------------------------------------------------");
     }
 
-}
-
-class User {
-    protected static int userCounter;
-    protected String UID;
-    protected String name;
-    protected String identityNum;
-    protected double discount;
-    String phoneNum;
-    String address;
-
-    public User(String name, String identityNum) {
-        this.name = name;
-        this.identityNum = identityNum;
-        this.UID = "101" + Integer.toString(userCounter);
-        this.discount = 0;
-        userCounter++;
-    }
-
-    public Order order(Car car) {
-        // Unfinished
-        Order order = new Order(this, car);
-
-        return order;
-    }
-
-    public String getUID() {
-        return this.UID;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getIdentityNum() {
-        return this.identityNum;
-    }
-}
-
-class Member extends User {
-    private String username;
-    private String password;
-    private boolean loggedIn;
-    private ArrayList<Order> orderHistory;
-
-    public Member(String name, String identityNum) {
-        super(name, identityNum);
-        this.identityNum = "111" + Integer.toString(userCounter);
-        this.discount = 0.1;
-        this.loggedIn = true;
-
-        this.orderHistory = new ArrayList<>();
-    }
-
-    public void setCredentials(String username, String password) {
-        if (!loggedIn)
-            return;
-
-        this.username = username;
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void login(String username, String password) {
-        if (!(username.equals(this.username) && password.equals(this.password))) {
-            System.out.println("Login Failed!");
-            throw new RuntimeException("Fatal: Incorrect Credentials!");
-        }
-        
-        System.out.println("Logged In!");
-        this.loggedIn = true;
-    }
-
-    public void logout() {
-        this.loggedIn = false;
-    }
-
-    @Override
-    public Order order(Car car) {
-        Order order = new Order(this, car);
-
-        orderHistory.add(order);
-        return order;
-    }
-
-    public void printHistory() {
-        System.out.println("-------------------------------------------------------------------------------------");
-        System.out.println("--------------------------------- Order History -------------------------------------");
-        System.out.printf("| %-16s | %-16s | %-16s | %-8s | %-13s |\n", "Invoice Date", "Start Date", "End Date", "Duration", "Net. Charges");
-
-        for (Order order : orderHistory) {
-            System.out.printf("| %-16s | %-16s | %-16s | %-5s hr | Rp. %-9s |\n", 
-                order.getInvoiceDate(),
-                order.getRentStartDate(), 
-                order.getRentEndDate(), 
-                order.calculateDuration(),
-                order.calculateTotalCharges()
-            );
-        }
-
-        System.out.println("-------------------------------------------------------------------------------------");
-        System.out.println();
-    }
-}
-
-class Order {
-    private LocalDateTime invoiceDate;
-    User renter;
-    Car rentedCar;
-    private LocalDateTime rentStartDate;
-    private LocalDateTime rentEndDate;
-
-    public Order(User renter, Car rentedCar) {
-        this.renter = renter;
-        this.rentedCar = rentedCar;
-
-        this.invoiceDate = LocalDateTime.now();
-    }
-
-    public void setRentStartDate(String formattedDateAndTime) {
-        // Unfinished
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
-        LocalDateTime currentDate = LocalDateTime.now();
-
-        if (proposedDate.isAfter(currentDate)) {
-            this.rentStartDate = proposedDate;
-        } else {
-            System.out.println("Error! The rent start date can't be before current date!");
-        }
-    }
-
-    public void setRentEndtDate(String formattedDateAndTime) {
-        // Unfinished
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
-
-        if (proposedDate.isAfter(this.rentStartDate)) {
-            this.rentEndDate = proposedDate;
-        } else {
-            System.out.println("Error! The rent end date can't be before rent start date!");
-        }
-    }
-
-    public String getRentStartDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return this.rentStartDate.format(formatter);
-    }
-    
-    public String getRentEndDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return this.rentEndDate.format(formatter);
-    }
-
-    public String getInvoiceDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return this.invoiceDate.format(formatter);
-    }
-
-    public int calculateDuration() {
-        Duration duration = Duration.between(rentStartDate, rentEndDate);
-        return (int) Math.ceil(duration.getSeconds() / 3600);
-    }
-
-    public int calculateTotalCharges() {
-        int durationInHour = calculateDuration();
-        return (int) (Math.ceil(durationInHour/6) * rentedCar.getRentFee() * (1 - this.renter.discount));
-    }
-
-    public void printBill() {
-        Car car = this.rentedCar;
-
-        System.out.println("################################################");
-        System.out.println("########          Payment Bill          ########");
-        System.out.println("################################################");
-        System.out.println("Invoice date: " + getInvoiceDate());
-        System.out.println("Renter Name: " + this.renter.name);
-        System.out.println("------------------------------------------------");
-        System.out.println("--------------- Rented Car Details -------------");
-        System.out.printf("%-21s: %s\n", "Brand Name", car.brand);
-        System.out.printf("%-21s: %s\n", "Model", car.model);
-        System.out.printf("%-21s: %s\n", "Color", car.color);
-        System.out.printf("%-21s: %s\n", "License Plate Number", car.licensePlateNum);
-        System.out.printf("%-21s: %b\n", "include driver?", car.includeDriver);
-        System.out.printf("%-21s: %s person\n", "Capacity", car.capacity);
-        System.out.printf("%-21s: Rp. %s /6 hr\n", "Rental Fee", car.rentFee);
-        System.out.println("------------------------------------------------");
-        System.out.println("------------------ Rent Details ----------------");
-        System.out.printf("%-20s: %s\n", "Start Date", getRentStartDate());
-        System.out.printf("%-20s: %s\n", "End Date", getRentEndDate());
-        System.out.printf("%-20s: %s hour\n", "Duration", Integer.toString(calculateDuration()));
-        System.out.printf("%-30s: Rp. %s\n", "Total Charges", (int) (car.getRentFee() * Math.ceil(calculateDuration()/6)));
-        System.out.printf("%-30s: Rp. %s\n", "Total Charges (after discount)", Integer.toString(calculateTotalCharges()));
-        System.out.println("################################################");
-        System.out.println("######  Thank you for using FilkomTravel!  #####");
-        System.out.println("######    We hope to see you next time!    #####");
-        System.out.println("################################################");
-        System.out.println();
-    }
-}
-
-class Car {
-    protected int rentFee;
-    protected String brand;
-    protected String model;
-    protected String color;
-    protected String licensePlateNum;
-    protected int capacity;
-    protected boolean includeDriver;
-    protected int carUniqueCode;
-
-    public int getRentFee() {
-        return this.rentFee;
-    }
-
-    public int getCapacity() {
-        return this.capacity;
-    }
-
-    protected void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public boolean isIncludeDriver(boolean includeDriver) {
-        this.includeDriver = includeDriver;
-        return this.includeDriver;
-    }
-
-    public void setCarUniqueCode(int carUniqueCode){
-        this.carUniqueCode = carUniqueCode;
-    }
-
-    public int getCarUniqueCode(){
-        return this.carUniqueCode;
-    }
-}
-
-class SmallCar extends Car {
-    SmallCar(){
-        super();
-        setCapacity(5);
-        this.rentFee = 40_000;
-    }
-
-    void carCapacity() {
-        if (isIncludeDriver(true))
-            capacity -= 1;
-    }
-
-}
-
-class MediumCar extends Car {
-    MediumCar(){
-        super();
-        setCapacity(8);
-        this.rentFee = 80_000;
-    }
-
-    void carCapacity() {
-        if (isIncludeDriver(true))
-            capacity -= 1;
-    }
-}
-
-class LargeCar extends Car {
-    LargeCar(){
-        super();
-        setCapacity(16);
-        this.rentFee = 120_000;
-    }
-
-    void carCapacity() {
-        if (isIncludeDriver(true)) 
-            capacity -= 1;
-    }
 }
