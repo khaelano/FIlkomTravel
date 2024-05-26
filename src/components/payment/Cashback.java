@@ -11,8 +11,8 @@ import java.time.LocalDate;
 
 import components.user.*;
 
-public class CashBack extends Promotion {
-    public CashBack(
+public class Cashback extends Promotion {
+    public Cashback(
         String promoCode, 
         LocalDate promoStartDate, 
         LocalDate promoEndDate, 

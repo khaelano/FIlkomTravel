@@ -327,7 +327,7 @@ public class FilkomTravelV2 {
     } else if (promoType.equals("CASHBACK")) {
       promoDB.put(
           promoCode,
-          new CashBack(promoCode, promoStartDate, promoEndDate, percentage, maxPromoValue, minTranscTreshold));
+          new Cashback(promoCode, promoStartDate, promoEndDate, percentage, maxPromoValue, minTranscTreshold));
     } else {
       return false;
     }
