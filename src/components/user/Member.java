@@ -87,6 +87,10 @@ public class Member extends User {
         return (int) (dur.getSeconds() / dayToSecond);
     }
 
+    public LocalDate getJoinDate() {
+        return this.joinDate;
+    }
+
     @Override
     public Order makeOrder(Car car, int quantity) {
         Order order = new Order(car, quantity, this);
