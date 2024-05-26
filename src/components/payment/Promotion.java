@@ -10,25 +10,28 @@ package components.payment;
 import java.time.LocalDate;
 
 public abstract class Promotion implements Applicable, Comparable<Promotion> {
-    public String getPromoName() {
-        return promoName;
-    }
+    private String promoCode;
+    private LocalDate promoStartDate, promoEndDate;
+    private double percentage;
+    private long maxPromoVal, minTranscTreshold;
 
-    protected String promoName;
-    protected int promoCode;
-    protected LocalDate promoStartDate;
-    protected LocalDate promoEndDate;
-    protected Order order;
-    
-    public Promotion(int promoCode, LocalDate startDate, LocalDate endDate) {
+    public Promotion(
+        String promoCode, 
+        LocalDate startDate, 
+        LocalDate endDate, 
+        double percentage,
+        long maxPromoValue,
+        long minTransactionTreshold
+    ) {
         this.promoCode = promoCode;
         this.promoStartDate = startDate;
         this.promoEndDate = endDate;
+        this.percentage = percentage;
+        this.maxPromoVal = maxPromoValue;
+        this.minTranscTreshold = minTransactionTreshold;
     }
 
-    public abstract boolean setOrder(Order order);
-
-    public int getPromoCode() {
+    public String getPromoCode() {
         return promoCode;
     }
 
@@ -40,27 +43,20 @@ public abstract class Promotion implements Applicable, Comparable<Promotion> {
         return promoEndDate;
     }
 
-    public void resetOrder() {
-        this.order = null;
+    public double getPercentage() {
+        return percentage;
+    }
+    
+    public long getMaxPromoVal() {
+        return maxPromoVal;
+    }
+
+    public long getMinTranscTreshold() {
+        return minTranscTreshold;
     }
 
     @Override
     public int compareTo(Promotion other) {
-        double otherDiscount = 0;
-        otherDiscount += other.calculateShippingDiscount();
-        otherDiscount += other.totalCashback();
-        otherDiscount += other.totalDiscount();
-
-        double thisDiscount = 0;
-        thisDiscount += other.calculateShippingDiscount();
-        thisDiscount += other.totalCashback();
-        thisDiscount += other.totalDiscount();
-
-        if (thisDiscount > otherDiscount)
-            return 1;
-        else if (thisDiscount < otherDiscount)
-            return -1;
-        else
-            return 0;
+        return Double.compare(this.percentage, other.percentage);
     }
 }

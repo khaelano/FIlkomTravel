@@ -11,23 +11,22 @@ import java.time.LocalDate;
 
 import components.user.*;
 
-public class ShippingDiscount extends Promotion {
-
-    public ShippingDiscount(
-            String promoCode, 
-            LocalDate promoStartDate, 
-            LocalDate promoEndDate,
-            double discountPercentage, 
-            long maxDiscountVal,
-            long minimumShippingFee
-        ) {
+public class CashBack extends Promotion {
+    public CashBack(
+        String promoCode, 
+        LocalDate promoStartDate, 
+        LocalDate promoEndDate, 
+        double cashbackPercentage, 
+        long maxCashbackVal,
+        long minTranscTreshold
+    ) {
         super(
             promoCode, 
             promoStartDate, 
             promoEndDate,
-            discountPercentage,
-            maxDiscountVal,
-            minimumShippingFee
+            cashbackPercentage,
+            maxCashbackVal,
+            maxCashbackVal
         );
     }
 
@@ -41,29 +40,29 @@ public class ShippingDiscount extends Promotion {
 
     @Override
     public boolean isMinimumPriceEligible(Order order) {
-        return false;
-    }
-
-    @Override
-    public boolean isShippingDiscountEligible(Order order) {
-        if (order.getShippingFee() > super.getMinTranscTreshold()) {
+        if (order.calculatePrice() >= super.getMinTranscTreshold()) {
             return true;
         }
         return false;
     }
 
     @Override
-    public long calculateShippingDiscount(Order order) {
-        if (isShippingDiscountEligible(order) == true) {
-            double potongan = order.getShippingFee() * super.getPercentage();
-            return (long) potongan;
+    public boolean isShippingDiscountEligible(Order order) {
+        return false;
+    }
+
+    @Override
+    public long totalCashback(Order order) {
+        if (isMinimumPriceEligible(order)) {
+            double cashback = order.calculatePrice() * super.getPercentage();
+            return (long) cashback;
         } else {
             return 0;
         }
     }
 
     @Override
-    public long totalCashback(Order order) {
+    public long calculateShippingDiscount(Order order) {
         return 0;
     }
 

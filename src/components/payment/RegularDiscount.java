@@ -11,23 +11,22 @@ import java.time.LocalDate;
 
 import components.user.*;
 
-public class ShippingDiscount extends Promotion {
-
-    public ShippingDiscount(
-            String promoCode, 
-            LocalDate promoStartDate, 
-            LocalDate promoEndDate,
-            double discountPercentage, 
-            long maxDiscountVal,
-            long minimumShippingFee
-        ) {
+public class RegularDiscount extends Promotion {
+    public RegularDiscount(
+        String promoCode, 
+        LocalDate promoStartDate, 
+        LocalDate promoEndDate, 
+        double discountPercentage,
+        long maxDiscountVal,
+        long minTranscTreshold
+    ) {
         super(
             promoCode, 
             promoStartDate, 
             promoEndDate,
             discountPercentage,
             maxDiscountVal,
-            minimumShippingFee
+            minTranscTreshold
         );
     }
 
@@ -41,25 +40,15 @@ public class ShippingDiscount extends Promotion {
 
     @Override
     public boolean isMinimumPriceEligible(Order order) {
-        return false;
-    }
-
-    @Override
-    public boolean isShippingDiscountEligible(Order order) {
-        if (order.getShippingFee() > super.getMinTranscTreshold()) {
+        if (order.calculatePrice() >= super.getMinTranscTreshold()) {
             return true;
         }
         return false;
     }
 
     @Override
-    public long calculateShippingDiscount(Order order) {
-        if (isShippingDiscountEligible(order) == true) {
-            double potongan = order.getShippingFee() * super.getPercentage();
-            return (long) potongan;
-        } else {
-            return 0;
-        }
+    public boolean isShippingDiscountEligible(Order order) {
+        return false;
     }
 
     @Override
@@ -69,6 +58,16 @@ public class ShippingDiscount extends Promotion {
 
     @Override
     public long totalDiscount(Order order) {
+        if (isMinimumPriceEligible(order)) {
+            double potongan = order.calculatePrice() * super.getPercentage();
+            return (long) potongan;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public long calculateShippingDiscount(Order order) {
         return 0;
     }
 }
