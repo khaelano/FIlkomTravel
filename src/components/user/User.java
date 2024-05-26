@@ -19,12 +19,7 @@ public abstract class User {
     protected long balance;
     protected HashMap<Integer, Order> orders;
     
-    public User(
-        String userID,
-        String firstName, 
-        String lastName,
-        long initialBalance
-    ) {
+    public User(String userID, String firstName, String lastName, long initialBalance) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
