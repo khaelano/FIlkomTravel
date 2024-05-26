@@ -16,6 +16,7 @@ import utils.Converter;
 public class FilkomTravelV2 {
   private static HashMap<String, User> userDB = new HashMap<>();
   private static HashMap<String, Vehicle> vehicleDB = new HashMap<>();
+  private static HashMap<String, Promotion> promoDB = new HashMap<>();
   private static Scanner sn = new Scanner(System.in);
 
   public static void main(String[] args) {
@@ -121,9 +122,8 @@ public class FilkomTravelV2 {
                     cs = CarSize.REGULAR;
                   } else {
                     System.out.printf(
-                      "CREATE MENU FAILED: %s IS NOT A VALID CAR SIZE\n",
-                      vehicleData[4]
-                    );
+                        "CREATE MENU FAILED: %s IS NOT A VALID CAR SIZE\n",
+                        vehicleData[4]);
                   }
 
                   // Creating car
@@ -132,8 +132,7 @@ public class FilkomTravelV2 {
                       vehicleData[1], // Vehicle name
                       vehicleData[2], // License number
                       Long.parseLong(vehicleData[3]), // Rent fee
-                      cs
-                  );
+                      cs);
 
                 }
                   break;
@@ -159,6 +158,37 @@ public class FilkomTravelV2 {
 
             case "PROMO": {
               // TODO: Implements promo creation mechanism
+              String promoType = sn.next();
+              sn.nextLine();
+
+              if (!(promoType.equals("DISCOUNT") && promoType.equals("CASHBACK"))) {
+                System.out.println("CREATE PROMO FAILED: INVALID PROMO TYPE");
+                continue mainLoop;
+              }
+
+              String[] promoData = sn.nextLine().split("|");
+
+              LocalDate promoStartDate = Converter.stringToLocalDate(promoData[1]);
+              LocalDate promoEndDate = Converter.stringToLocalDate(promoData[2]);
+              double percentage = Double.parseDouble(promoData[3].replace("%", ""));
+              long maxPromoValue = Long.parseLong(promoData[4]);
+              long minTranscTreshold = Long.parseLong(promoData[5]);
+
+              boolean promoCreationResult = false;
+              promoCreationResult = createPromo(
+                promoType,
+                promoData[0],
+                promoStartDate,
+                promoEndDate,
+                percentage,
+                maxPromoValue,
+                minTranscTreshold
+              );
+              if (promoCreationResult) {
+                System.out.printf("CREATE PROMO %s SUCCESS: %s\n", promoType, promoData[0]);
+              } else {
+                System.out.printf("CREATE PROMO %s FAILED: %s IS EXISTS\n", promoType, promoData[0]);
+              }
             }
               break;
 
@@ -265,13 +295,43 @@ public class FilkomTravelV2 {
       CarSize size) {
     // TODO: Implements bike creation mechanism
 
-    /// Check if vehicleID is available
+    // Check if vehicleID is available
     if (userDB.containsKey(vehicleID))
       return false;
 
     vehicleDB.put(
         vehicleID,
         new Car(vehicleID, vehicleName, licenseNumber, rentFee, size));
+
+    return true;
+  }
+
+  public static boolean createPromo(
+      String promoType,
+      String promoCode,
+      LocalDate promoStartDate,
+      LocalDate promoEndDate,
+      double percentage,
+      long maxPromoValue,
+      long minTranscTreshold) {
+    // TODO: Implements promo creation mechanism
+
+    // Check if promotion code is available
+    if (promoDB.containsKey(promoCode))
+      return false;
+
+    if (promoType.equals("DISCOUNT")) {
+      promoDB.put(
+          promoCode,
+          new RegularDiscount(promoCode, promoStartDate, promoEndDate, percentage, maxPromoValue, minTranscTreshold));
+
+    } else if (promoType.equals("CASHBACK")) {
+      promoDB.put(
+          promoCode,
+          new CashBack(promoCode, promoStartDate, promoEndDate, percentage, maxPromoValue, minTranscTreshold));
+    } else {
+      return false;
+    }
 
     return true;
   }
