@@ -17,13 +17,13 @@ import java.time.Duration;
 
 public class Order {
     private static int counter;
-    private LocalDateTime invoiceDate;
+    private LocalDate invoiceDate;
     private User renter;
     private int orderID;
-    private Car rentedCar;
-    private int carQuantity;
-    private LocalDateTime rentStartDate;
-    private LocalDateTime rentEndDate;
+    private Vehicle rentedVehicle;
+    private int rentDuration;
+    private LocalDate rentStartDate;
+    private LocalDate rentEndDate;
     private double shippingFee;
     private double cashBack;
     private double totalDiscount;
@@ -34,21 +34,22 @@ public class Order {
         return subtotal;
     }
 
-    public Order(Car rentedCar, int quantity, User renter) {
-        this.rentedCar = rentedCar;
-        this.carQuantity = quantity;
+    public Order(Vehicle rentedVehicle, int rentDuration, User renter) {
+        this.rentedVehicle = rentedVehicle;
+        this.rentDuration = rentDuration;
         this.renter = renter;
-        this.shippingFee = quantity * 100_000;
-
-        this.invoiceDate = LocalDateTime.now();
+        this.shippingFee = rentDuration * 100_000;
+        
+        this.invoiceDate = LocalDate.now();
         this.orderID = counter;
         counter++;
+        this.rentEndDate = this.rentStartDate.plusDays(rentDuration);
     }
 
-    public void setRentStartDate(String formattedDateAndTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
-        LocalDateTime currentDate = LocalDateTime.now();
+    public void setRentStartDate(String formattedDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate proposedDate = LocalDate.parse(formattedDate, formatter);
+        LocalDate currentDate = LocalDate.now();
 
         if (proposedDate.isAfter(currentDate)) {
             this.rentStartDate = proposedDate;
@@ -57,38 +58,31 @@ public class Order {
         }
     }
 
-    public void setRentEndDate(String formattedDateAndTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        LocalDateTime proposedDate = LocalDateTime.parse(formattedDateAndTime, formatter);
-
-        if (proposedDate.isAfter(this.rentStartDate)) {
-            this.rentEndDate = proposedDate;
-        } else {
-            System.out.println("Error! The rent end date can't be before rent start date!");
-        }
-    }
-
     public String getRentStartDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return this.rentStartDate.format(formatter);
     }
     
     public String getRentEndDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return this.rentEndDate.format(formatter);
     }
 
     public String getInvoiceDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return this.invoiceDate.format(formatter);
     }
 
-    public Car getRentedCar() {
-        return this.rentedCar;
+    public Car getRentedVehicle() {
+        return this.rentedVehicle;
     }
 
-    public int getCarQuantity() {
-        return this.carQuantity;
+    public int getRentDuration() {
+        return this.rentDuration;
+    }
+
+    public void setRentDuration(int dur) {
+       this.rentDuration = dur;
     }
 
     public int getOrderID() {
@@ -100,16 +94,16 @@ public class Order {
     }
 
     public String getCarName() {
-        return rentedCar.model;
+        return rentedVehicle.model;
     }
 
     public double calculateDuration() {
-        Duration duration = Duration.between(rentStartDate, rentEndDate);
-        return Math.ceil(duration.getSeconds() / 3600);
+        long days = ChronoUnit.DAYS.between(rentStartDate, rentEndDate);
+        return days * 24; // converting days to hours
     }
 
     public double calculatePrice() {
-        return this.rentedCar.getRentalFee() * (calculateDuration()/4);
+        return this.rentedVehicle.getRentalFee() * (calculateDuration() / 6); // assuming the rental fee is per 6 hours
     }
 
     public boolean checkOut() {
@@ -125,11 +119,11 @@ public class Order {
             System.out.println("Invoice ID   : -");
 
         System.out.println("---- Car Details ---- ");
-        System.out.println("Car brand     : " + rentedCar.brand);
-        System.out.println("Car model     : " + rentedCar.model);
-        System.out.println("Car capacity  : " + rentedCar.getCapacity());
-        System.out.println("Rental fee    : Rp" + rentedCar.getRentalFee() + " /6hr");
-        System.out.println("Car quantity  : " + carQuantity);
+        System.out.println("Car brand     : " + rentedVehicle.brand);
+        System.out.println("Car model     : " + rentedVehicle.model);
+        System.out.println("Car capacity  : " + rentedVehicle.getCapacity());
+        System.out.println("Rental fee    : Rp" + rentedVehicle.getRentalFee() + " /6hr");
+        System.out.println("Car quantity  : " + rentDuration);
 
         System.out.println("---- Rent details ----");
         System.out.println("Start date    : " + getRentStartDate());
