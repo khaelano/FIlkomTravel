@@ -18,6 +18,7 @@ public class FilkomTravelV2 {
   private static HashMap<String, Vehicle> vehicleDB = new HashMap<>();
   private static HashMap<String, Promotion> promoDB = new HashMap<>();
   private static Scanner sn = new Scanner(System.in);
+  private static HashMap<String, Order> cartDB;
 
   public static void main(String[] args) {
     mainLoop: while (true) {
@@ -175,14 +176,13 @@ public class FilkomTravelV2 {
 
               boolean promoCreationResult = false;
               promoCreationResult = createPromo(
-                promoType,
-                promoData[0],
-                promoStartDate,
-                promoEndDate,
-                percentage,
-                maxPromoValue,
-                minTranscTreshold
-              );
+                  promoType,
+                  promoData[0],
+                  promoStartDate,
+                  promoEndDate,
+                  percentage,
+                  maxPromoValue,
+                  minTranscTreshold);
               if (promoCreationResult) {
                 System.out.printf("CREATE PROMO %s SUCCESS: %s\n", promoType, promoData[0]);
               } else {
@@ -334,4 +334,70 @@ public class FilkomTravelV2 {
 
     return true;
   }
+
+  public static void addToCart(String userID, String vehicleID, int duration, String rentStartDate) {
+    User user = userDB.get(userID);
+    Vehicle vehicle = vehicleDB.get(vehicleID);
+
+    if (user == null || vehicle == null) {
+      System.out.println("ADD_TO_CART FAILED: NON EXISTENT CUSTOMER OR MENU");
+      return;
+    }
+
+    String cartKey = userID + "-" + vehicleID;
+    Order order = cartDB.get(cartKey);
+
+    boolean isUpdated = false;
+
+    if (order != null) {
+      order.setRentDuration(order.getRentDuration() + duration);
+      isUpdated = true;
+    } else {
+      order = new Order(vehicle, duration, user);
+      order.setRentStartDate(rentStartDate);
+      cartDB.put(cartKey, order);
+    }
+
+    String message = String.format("ADD_TO_CART SUCCESS: %d %s %s %s %s",
+        duration,
+        (duration > 1) ? "days" : "day",
+        vehicle.getVehicleName(),
+        vehicle.getLicenseNumber(),
+        isUpdated ? "(UPDATED)" : "(NEW)");
+
+    System.out.println(message);
+  }
+
+  public static void removeFromCart(String userID, String vehicleID, int quantity) {
+    // Pengecekan eksistensi pengguna dan kendaraan
+    User user = userDB.get(userID);
+    Vehicle vehicle = vehicleDB.get(vehicleID);
+
+    if (user == null || vehicle == null) {
+        System.out.println("REMOVE_FROM_CART FAILED: NON EXISTENT CUSTOMER OR MENU");
+        return;
+    }
+
+    // Mencari order dalam keranjang pengguna
+    String cartKey = userID + "-" + vehicleID;
+    Order targetOrder = cartDB.get(cartKey);
+
+    if (targetOrder == null) {
+        System.out.println("REMOVE_FROM_CART FAILED: NON EXISTENT CUSTOMER OR MENU");
+        return;
+    }
+
+    // Mengurangi kuantitas order
+    int newQuantity = targetOrder.getRentDuration() - quantity;
+    if (newQuantity > 0) {
+        targetOrder.setRentDuration(newQuantity);
+        System.out.printf("REMOVE_FROM_CART SUCCESS: %s %d QUANTITY IS DECREMENTED\n", vehicle.getVehicleName(), newQuantity);
+    } else {
+        cartDB.remove(cartKey);
+        System.out.printf("REMOVE_FROM_CART: %s IS REMOVED\n", vehicle.getVehicleName());
+    }
+}
+
+
+
 }
