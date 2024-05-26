@@ -188,19 +188,16 @@ public class FilkomTravel {
             return;
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        LocalDate startDate = LocalDate.parse(TanggalAwal, formatter);
-
         boolean isUpdated = false;
         String cartKey = IDPemesan + "-" + IDMenu;
         Order order = cartDB.get(cartKey);
 
         if (order != null) {
-            order.setRentDuration(order.getrentDuration() + qty);
+            order.setRentDuration(order.getRentDuration() + qty);
             isUpdated = true;
         } else {
             order = user.makeOrder(car, qty);
-            order.setRentStartDate(startDate);
+            order.setRentStartDate(TanggalAwal);
             cartDB.put(cartKey, order);
         }
 
