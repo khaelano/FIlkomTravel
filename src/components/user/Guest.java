@@ -12,7 +12,7 @@ import components.payment.Order;
 
 public class Guest extends User {
     public Guest(String userID, long initialBalance) {
-        super(userID, "Guest", null, initialBalance);
+        super(userID, "NON_MEMBER", null, initialBalance);
     }
 
     public Order makeOrder(Car rentedCar, int quantity) {
