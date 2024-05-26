@@ -213,8 +213,23 @@ public class FilkomTravelV2 {
         }
           break;
 
-        case "TOP_UP": {
+        case "TOPUP": {
           // TODO: Implements top up mechanism
+
+          String userID = sn.next();
+          int nominal = sn.nextInt();
+          sn.nextLine();
+
+          User user = userDB.get(userID);
+          if (user != null) {
+            long balanceBerfore = user.getBalance();
+            user.incrBalance(nominal);
+            long balanceAfter = user.getBalance();
+            System.out.printf("TOPUP SUCCESS: %s %d => %d\n", user.getFirstName(), balanceBerfore, balanceAfter);
+          } else {
+            System.out.println("TOPUP FAILED: NON EXISTENT CUSTOMER");
+            continue mainLoop;
+          }
         }
           break;
 

@@ -51,4 +51,15 @@ public abstract class User {
         return orders;
     }
 
+    public void incrBalance(long nominal) {
+        this.balance += nominal;
+    }
+
+    public void decrBalance(long nominal) {
+        this.balance -= nominal;
+    }
+
+    public long getBalance() {
+        return this.balance;
+    }
 }
