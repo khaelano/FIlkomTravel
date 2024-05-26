@@ -23,20 +23,21 @@ public class FilkomTravelV2 {
     mainLoop: while (true) {
       String command = sn.next();
       switch (command) {
-        case "ADD": {
+        case "CREATE": {
           String subcmd = sn.next();
           switch (subcmd) {
             case "MEMBER": {
               // TODO: Implements member creation mechanism
-              String[] memberData = sn.next().split("|");
-              sn.nextLine();
+              String[] memberData = sn.nextLine().trim().split("\\|");
 
-              String[] userName = memberData[1].split(" ", 1);
+              String[] userName = memberData[1].split(" ", 2);
+              String userLastName = userName.length >= 2 ? userName[1] : "";
+
               LocalDate joinDate = Converter.stringToLocalDate(memberData[2]);
               long initialBalance = Long.parseLong(memberData[3]);
 
               // Validate member ID input
-              if (!memberData[0].matches("A[0-9]{3}\b")) {
+              if (!memberData[0].trim().matches("A[0-9]{3}$")) {
                 System.out.println("CREATE MEMBER FAILED: INVALID USER ID");
                 continue mainLoop;
               }
@@ -45,7 +46,7 @@ public class FilkomTravelV2 {
               if (createMember(
                   memberData[0], // Member ID
                   userName[0], // First name
-                  userName[1], // Last name
+                  userLastName, // Last name
                   joinDate,
                   initialBalance)) {
                 System.out.printf(
@@ -61,13 +62,12 @@ public class FilkomTravelV2 {
 
             case "GUEST": {
               // TODO: Implements guest creation mechanism
-              String[] guestData = sn.next().split("|");
-              sn.nextLine();
+              String[] guestData = sn.nextLine().trim().split("\\|");
 
-              long initialBalance = Long.parseLong(guestData[3]);
+              long initialBalance = Long.parseLong(guestData[1]);
 
               // Validate guest ID input
-              if (!guestData[0].matches("B[0-9]{3}\b")) {
+              if (!guestData[0].matches("T[0-9]{3}$")) {
                 System.out.println("CREATE GUEST FAILED: INVALID USER ID");
                 continue mainLoop;
               }
@@ -91,11 +91,10 @@ public class FilkomTravelV2 {
               // TODO: Implements vehicle menu creation mechanism
               String subSubmenu = sn.next();
               boolean vehicleCreationResult = false;
-              String[] vehicleData = sn.next().split("|");
-              sn.nextLine();
+              String[] vehicleData = sn.nextLine().trim().split("\\|");
 
               // Check the vehcle ID validity
-              if (!vehicleData[0].matches("M[0-9]{3}\b")) {
+              if (!vehicleData[0].matches("M[0-9]{3}$")) {
                 System.out.println("CREATE MENU FAILED: INVALID VEHICLE ID");
                 continue mainLoop;
               }
@@ -161,12 +160,12 @@ public class FilkomTravelV2 {
               String promoType = sn.next();
               sn.nextLine();
 
-              if (!(promoType.equals("DISCOUNT") && promoType.equals("CASHBACK"))) {
+              if (!(promoType.equals("DISCOUNT") || promoType.equals("CASHBACK"))) {
                 System.out.println("CREATE PROMO FAILED: INVALID PROMO TYPE");
                 continue mainLoop;
               }
 
-              String[] promoData = sn.nextLine().split("|");
+              String[] promoData = sn.nextLine().trim().split("\\|");
 
               LocalDate promoStartDate = Converter.stringToLocalDate(promoData[1]);
               LocalDate promoEndDate = Converter.stringToLocalDate(promoData[2]);
@@ -277,7 +276,7 @@ public class FilkomTravelV2 {
     // TODO: Implements bike creation mechanism
 
     /// Check if vehicleID is available
-    if (userDB.containsKey(vehicleID))
+    if (vehicleDB.containsKey(vehicleID))
       return false;
 
     vehicleDB.put(
@@ -296,7 +295,7 @@ public class FilkomTravelV2 {
     // TODO: Implements bike creation mechanism
 
     // Check if vehicleID is available
-    if (userDB.containsKey(vehicleID))
+    if (vehicleDB.containsKey(vehicleID))
       return false;
 
     vehicleDB.put(
