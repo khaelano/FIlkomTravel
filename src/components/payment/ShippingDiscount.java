@@ -1,8 +1,8 @@
-package com.payment;
+package components.payment;
 
 import java.time.LocalDate;
 
-import com.user.*;
+import components.user.*;
 
 public class ShippingDiscount extends Promotion {
     private double discountPercentage;

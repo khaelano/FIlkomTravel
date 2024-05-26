@@ -1,19 +1,30 @@
+/*
+ * 235150200111051 Khaelano Abroor Maulana
+ * 235150200111057 Arza Marevi Bangun
+ * 235150207111058 Muhammad Lutfi Aziz
+ * 235150207111059 Nabiel Tatra Edy Firdaus
+ */
+
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
-import java.time.LocalDate;
 
-import com.car.*;
-import com.payment.*;
-import com.user.*;
+import components.car.*;
+import components.payment.*;
+import components.user.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 public class FilkomTravel {
     private static HashMap<String, Member> memberDB;
+    private static HashMap<String, Guest> guestDB;
     private static ArrayList<Car> carDB;
     private static Scanner S;
+    private static HashMap<String, Order> cartDB;
 
     public static void main(String[] args) throws Exception {
         memberDB = new HashMap<>();
@@ -107,7 +118,6 @@ public class FilkomTravel {
 
         Order order = user.makeOrder(car, qty);
         order.setRentStartDate(startDate);
-        order.setRentEndDate(endDate);
 
         if (user instanceof Member) {
             PriorityQueue<Promotion> promotion = new PriorityQueue<>();
@@ -158,6 +168,53 @@ public class FilkomTravel {
 
         return order;
     }
+
+    public static void addToCart(String IDPemesan, String IDMenu, int qty, String TanggalAwal) {
+        User user = memberDB.get(IDPemesan);
+        if (user == null) {
+            user = guestDB.get(IDPemesan);
+        }
+
+        Car car = null;
+        for (Car c : carDB) {
+            if (c.model().equals(IDMenu)) {
+                car = c;
+                break;
+            }
+        }
+
+        if (user == null || car == null) {
+            System.out.println("ADD_TO_CART FAILED: NON EXISTENT CUSTOMER OR MENU");
+            return;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate startDate = LocalDate.parse(TanggalAwal, formatter);
+
+        boolean isUpdated = false;
+        String cartKey = IDPemesan + "-" + IDMenu;
+        Order order = cartDB.get(cartKey);
+
+        if (order != null) {
+            order.setRentDuration(order.getrentDuration() + qty);
+            isUpdated = true;
+        } else {
+            order = user.makeOrder(car, qty);
+            order.setRentStartDate(startDate);
+            cartDB.put(cartKey, order);
+        }
+
+        String message = String.format("ADD_TO_CART SUCCESS: %d %s %s %s %s",
+            qty,
+            (qty > 1) ? "days" : "day",
+            car.getBrand() + " " + car.getModel(),
+            car.getLicensePlate(),
+            isUpdated ? "(UPDATED)" : "(NEW)"
+        );
+
+        System.out.println(message);
+    }
+
 
     private static void checkOut(User user) {
         // TODO implements check out method

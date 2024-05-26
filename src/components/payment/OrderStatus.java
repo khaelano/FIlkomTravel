@@ -1,4 +1,4 @@
-package com.payment;
+package components.payment;
 
 public enum OrderStatus {
     UNPAID,
