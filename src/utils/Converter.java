@@ -13,6 +13,6 @@ import java.time.format.DateTimeFormatter;
 public class Converter {
     public static LocalDate stringToLocalDate(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        return LocalDate.parse(date, formatter);
+        return LocalDate.parse(date.trim(), formatter);
     }
 }
