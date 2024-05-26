@@ -13,12 +13,7 @@ public abstract class Vehicle {
     private String licenseNumber;
     private long rentFee;
 
-    public Vehicle(
-        String vehicleID,
-        String vehicleName,
-        String licenseNumber,
-        long rentFee
-    ) {
+    public Vehicle(String vehicleID, String vehicleName, String licenseNumber, long rentFee) {
         this.vehicleID = vehicleID;
         this.vehicleName = vehicleName;
         this.licenseNumber = licenseNumber;
