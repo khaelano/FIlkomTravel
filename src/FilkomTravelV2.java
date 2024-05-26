@@ -31,7 +31,7 @@ public class FilkomTravelV2 {
               String[] memberData = sn.nextLine().trim().split("\\|");
 
               String[] userName = memberData[1].split(" ", 2);
-              String userLastName = userName.length >= 2 ? userName[1] : "";
+              String userLastName = userName.length >= 2 ? userName[1] : null;
 
               LocalDate joinDate = Converter.stringToLocalDate(memberData[2]);
               long initialBalance = Long.parseLong(memberData[3]);
@@ -67,7 +67,7 @@ public class FilkomTravelV2 {
               long initialBalance = Long.parseLong(guestData[1]);
 
               // Validate guest ID input
-              if (!guestData[0].matches("T[0-9]{3}$")) {
+              if (!guestData[0].matches("G[0-9]{3}$")) {
                 System.out.println("CREATE GUEST FAILED: INVALID USER ID");
                 continue mainLoop;
               }

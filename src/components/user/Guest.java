@@ -11,11 +11,8 @@ import components.car.Car;
 import components.payment.Order;
 
 public class Guest extends User {
-    public Guest(
-        String userID,
-        long initialBalance
-    ) {
-        super(userID, "Guest", "Guest", initialBalance);
+    public Guest(String userID, long initialBalance) {
+        super(userID, "Guest", null, initialBalance);
     }
 
     public Order makeOrder(Car rentedCar, int quantity) {
