@@ -37,7 +37,7 @@ public class Member extends User {
         System.out.println("Nama: " + getFullName());
         System.out.println("Saldo: " + getBalance());
         System.out.printf(
-            "%4s| %11s | %5s | %5s | %8s | %-8s\n", 
+            "%4s| %11s | %5s | %5s | %8s | %-9s\n", 
             "No", "No. Pesanan", "Motor", "Mobil", "Subtotal", "PROMO"
         );
         System.out.println("====================================================");
@@ -47,7 +47,7 @@ public class Member extends User {
             int bikeNumber = order.getBikeNumber();
 
             System.out.printf(
-                "%4d| %11d | %5d | %5d | %8d | %-8s\n", 
+                "%4d| %11d | %5d | %5d | %8d | %-9s\n", 
                 counter, 
                 order.getOrderID(), 
                 bikeNumber, 
