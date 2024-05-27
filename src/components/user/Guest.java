@@ -9,8 +9,8 @@ package components.user;
 
 import java.time.LocalDate;
 
-import components.car.Vehicle;
 import components.payment.Order;
+import components.vehicle.Vehicle;
 
 public class Guest extends User {
     private Order lastOrder;

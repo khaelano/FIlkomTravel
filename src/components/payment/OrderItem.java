@@ -3,7 +3,7 @@ package components.payment;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-import components.car.*;
+import components.vehicle.*;
 
 public class OrderItem {
     String itemID;

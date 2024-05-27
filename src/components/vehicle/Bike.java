@@ -5,7 +5,7 @@
  * 235150207111059 Nabiel Tatra Edy Firdaus
  */
 
-package components.car;
+package components.vehicle;
 
 public class Bike extends Vehicle{
     public Bike(

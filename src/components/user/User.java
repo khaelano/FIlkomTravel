@@ -10,8 +10,8 @@ package components.user;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import components.car.Vehicle;
 import components.payment.Order;
+import components.vehicle.Vehicle;
 
 public abstract class User {
     private String userID;

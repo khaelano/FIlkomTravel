@@ -1,4 +1,4 @@
-package components.car;
+package components.vehicle;
 
 public enum CarSize {
     REGULAR(4),
