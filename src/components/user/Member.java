@@ -7,17 +7,14 @@
 
 package components.user;
 
-import java.time.Duration;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
-import components.car.Car;
+import components.car.Vehicle;
 import components.payment.Order;
 
 public class Member extends User {
-    private String username;
-    private String password;
-    private boolean loggedIn;
     private ArrayList<Order> orderHistory;
     private LocalDate joinDate;
 
@@ -29,62 +26,43 @@ public class Member extends User {
         long initialBalance
     ) {
         super(userID, firstName, lastName, initialBalance);
-        this.loggedIn = true;
         this.joinDate = joinDate;
 
         this.orderHistory = new ArrayList<>();
     }
 
-    public boolean register(String username, String password) {
-        if (this.loggedIn != true) return false;
-
-        this.username = username;
-        this.password = password;
-        return true;
-    }
-    
-    public boolean login(String username, String password) {
-        if (!(username.equals(this.username) && password.equals(this.password))) return false;
-        
-        System.out.println("Logged In!");
-        this.loggedIn = true;
-        return true;
-    }
-
-    public boolean logout() {
-        if (this.loggedIn == true) return false;
-
-        this.loggedIn = false;
-        return true;
-    }
-
     public void printHistory() {
-        System.out.println("-------------------------------------------------------------------------------------");
-        System.out.println("--------------------------------- Order History -------------------------------------");
-        System.out.printf("| %-16s | %-16s | %-16s | %-8s | %-13s |\n", "Invoice Date", "Start Date", "End Date",
-                "Duration", "Net. Charges");
-
+        // TODO: Implements print history
+        System.out.println("Kode Pemesan: " + getUserID());
+        System.out.println("Nama: " + getFullName());
+        System.out.println("Saldo: " + getBalance());
+        System.out.printf(
+            "%4s| %11s | %5s | %5s | %8s | %-8s\n", 
+            "No", "No. Pesanan", "Motor", "Mobil", "Subtotal", "PROMO"
+        );
+        System.out.println("====================================================");
+        int counter = 1;
         for (Order order : orderHistory) {
-            System.out.printf("| %-16s | %-16s | %-16s | %-5s hr | Rp. %-9s |\n",
-                    order.getInvoiceDate(),
-                    order.getRentStartDate(),
-                    order.getRentEndDate(),
-                    order.calculateDuration(),
-                    order.getSubtotal());
+            int carNumber = order.getCarNumber();
+            int bikeNumber = order.getBikeNumber();
+
+            System.out.printf(
+                "%4d| %11d | %5d | %5d | %8d | %-8s\n", 
+                counter, 
+                order.getOrderID(), 
+                bikeNumber, 
+                carNumber, 
+                order.calculateTotal() - order.getDiscountVal(), 
+                order.getAppliedPromo().getPromoCode()
+            );
+            counter++;
         }
-
-        System.out.println("-------------------------------------------------------------------------------------");
-        System.out.println();
-    }
-
-    public String getUsername() {
-        return this.username;
+        System.out.println("====================================================");
     }
 
     public int getMembershipDuration() {
-        Duration dur = Duration.between(joinDate, LocalDate.now());
-        long dayToSecond = 86400;
-        return (int) (dur.getSeconds() / dayToSecond);
+        long duration = ChronoUnit.DAYS.between(joinDate, LocalDate.now());
+        return (int) duration;
     }
 
     public LocalDate getJoinDate() {
@@ -92,22 +70,61 @@ public class Member extends User {
     }
 
     @Override
-    public Order makeOrder(Car car, int quantity) {
-        Order order = new Order(car, quantity, this);
-        orders.put(order.getOrderID(), order);
+    public boolean makeOrder() {
+        if (this.activeOrder == null) {
+            this.activeOrder = new Order(this);
+            return true;
+        }
 
-        return order;
+        return false;
     }
 
     @Override
-    public boolean confirmPayment(int orderID) {
-        Order order = this.orders.get(orderID);
-        
-        if (order == null) return false;
+    public boolean confirmPayment() {
+        boolean result =  this.activeOrder.checkOut();
+        if (result) {
+            this.orderHistory.add(activeOrder);
+            this.activeOrder = null;
+        }
+        return result;
+    }
 
-        order.pay();
-        orderHistory.add(orders.remove(orderID));
+    @Override
+    public int addToCart(Vehicle rentedVehicle, LocalDate startDate, int duration) {
+        // Check if the vehicle is already in the cart
+        if (activeOrder.contains(rentedVehicle.getVehicleID())) {
+            activeOrder.incrVehicle(rentedVehicle.getVehicleID(), duration);
+            return activeOrder.getDuration(rentedVehicle.getVehicleID());
+        }
 
-        return true;
+        activeOrder.addVehicle(rentedVehicle, startDate, duration);
+        return duration;
+    }
+
+    @Override
+    public int removeFromCart(Vehicle rentedVehicle, int duration) {
+        // Check if the vehicle is already in the cart
+        if (activeOrder.contains(rentedVehicle.getVehicleID())) {
+            activeOrder.decrVehicle(rentedVehicle.getVehicleID(), duration);
+
+            if (activeOrder.getDuration(rentedVehicle.getVehicleID()) <= 0) {
+                activeOrder.removeVehicle(rentedVehicle);
+                return 0; // Will return 0 if the vehicle is removed;
+            } else {
+                return activeOrder.getDuration(rentedVehicle.getVehicleID()); // Will return the new vehicle duration
+            }
+        }
+
+        else return -1; // Will return -1 if the vehicle is not found
+    }
+
+    @Override
+    public void printBill() {
+        Order lastOrder = orderHistory.size() == 0 ? null : orderHistory.get(orderHistory.size()-1);
+        if (this.activeOrder != null) {
+            this.activeOrder.printDetails();
+        } else if (lastOrder != null) {
+            lastOrder.printDetails();
+        }
     }
 }

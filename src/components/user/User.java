@@ -7,9 +7,10 @@
 
 package components.user;
 
-import java.util.HashMap;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
-import components.car.Car;
+import components.car.Vehicle;
 import components.payment.Order;
 
 public abstract class User {
@@ -17,19 +18,26 @@ public abstract class User {
     private String firstName, lastName;
     protected boolean isOrdering;
     protected long balance;
-    protected HashMap<Integer, Order> orders;
+    protected ArrayList<Order> orderHistory;
+    protected Order activeOrder;
     
     public User(String userID, String firstName, String lastName, long initialBalance) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.balance = initialBalance;
-        this.orders = new HashMap<>();
+        this.orderHistory = new ArrayList<Order>();
     }
 
-    public abstract Order makeOrder(Car car, int quantity);
+    public abstract boolean makeOrder();
 
-    public abstract boolean confirmPayment(int orderID);
+    public abstract int addToCart(Vehicle rentedVehicle, LocalDate startDate, int duration);
+
+    public abstract int removeFromCart(Vehicle rentedVehicle, int duration);
+
+    public abstract boolean confirmPayment();
+
+    public abstract void printBill();
 
     public String getUserID() {
         return this.userID;
@@ -47,8 +55,8 @@ public abstract class User {
         return lastName != null ? firstName + " " + lastName : firstName;
     }
 
-    public HashMap<Integer, Order> getOrders() {
-        return orders;
+    public Order[] getOrderHistory() {
+        return (Order[]) orderHistory.toArray();
     }
 
     public void incrBalance(long nominal) {
@@ -61,5 +69,9 @@ public abstract class User {
 
     public long getBalance() {
         return this.balance;
+    }
+
+    public Order getActiveOrder() {
+        return this.activeOrder;
     }
 }

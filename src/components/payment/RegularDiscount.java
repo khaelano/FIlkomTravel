@@ -9,8 +9,6 @@ package components.payment;
 
 import java.time.LocalDate;
 
-import components.user.*;
-
 public class RegularDiscount extends Promotion {
     public RegularDiscount(
         String promoCode, 
@@ -31,27 +29,6 @@ public class RegularDiscount extends Promotion {
     }
 
     @Override
-    public boolean isCustomerEligible(Member member) {
-        if (member.getMembershipDuration() > 30) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isMinimumPriceEligible(Order order) {
-        if (order.calculatePrice() >= super.getMinTranscTreshold()) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isShippingDiscountEligible(Order order) {
-        return false;
-    }
-
-    @Override
     public long totalCashback(Order order) {
         return 0;
     }
@@ -59,7 +36,7 @@ public class RegularDiscount extends Promotion {
     @Override
     public long totalDiscount(Order order) {
         if (isMinimumPriceEligible(order)) {
-            double potongan = order.calculatePrice() * super.getPercentage();
+            double potongan = order.calculateSubTotal() * super.getPercentage();
             return (long) potongan;
         } else {
             return 0;

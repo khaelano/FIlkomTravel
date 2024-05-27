@@ -8,6 +8,9 @@
 package components.payment;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+import components.user.Member;
 
 public abstract class Promotion implements Applicable, Comparable<Promotion> {
     private String promoCode;
@@ -53,6 +56,25 @@ public abstract class Promotion implements Applicable, Comparable<Promotion> {
 
     public long getMinTranscTreshold() {
         return minTranscTreshold;
+    }
+
+    @Override
+    public boolean isCustomerEligible(Member member) {
+        long duration = ChronoUnit.DAYS.between(member.getJoinDate(), LocalDate.now());
+        return duration > 30;
+    }
+
+    @Override
+    public boolean isMinimumPriceEligible(Order order) {
+        if (order.calculateSubTotal() >= getMinTranscTreshold()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isShippingDiscountEligible(Order order) {
+        return false;
     }
 
     @Override

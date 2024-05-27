@@ -1,0 +1,74 @@
+CREATE GUEST SUCCESS: G001 1000000
+CREATE GUEST SUCCESS: G002 1000000
+CREATE GUEST SUCCESS: G003 1000000
+CREATE GUEST FAILED: INVALID USER ID
+CREATE MEMBER SUCCESS: A001 Ani
+CREATE MEMBER SUCCESS: A002 Parto
+CREATE MEMBER SUCCESS: A003 Lena
+CREATE MEMBER FAILED: INVALID USER ID
+CREATE MENU SUCCESS: M001 Honda Scoopy N1234AZ
+CREATE MENU SUCCESS: M002 Honda Beat N2324AA
+CREATE MENU SUCCESS: M003 Toyota Avanza N412234AM
+CREATE MENU SUCCESS: M004 Toyota Avanza N1928XAC
+CREATE MENU FAILED: N91882AZ IS EXISTS
+CREATE MENU FAILED: N1928XAC IS EXISTS
+CREATE MENU SUCCESS: M005 Toyota Agya N34928M
+CREATE PROMO CASHBACK SUCCESS: CASHBACK20
+CREATE PROMO DISCOUNT SUCCESS: DISC20
+CREATE PROMO CASHBACK SUCCESS: CB50
+CREATE PROMO DISCOUNT FAILED: CB50 IS EXISTS
+ADD_TO_CART SUCCESS: 2 days Honda Scoopy N1234AZ (NEW)
+ADD_TO_CART SUCCESS: 2 days Honda Beat N2324AA (NEW)
+ADD_TO_CART SUCCESS: 4 days Honda Scoopy N1234AZ (UPDATE)
+ADD_TO_CART SUCCESS: 6 days Honda Scoopy N1234AZ (UPDATE)
+ADD_TO_CART FAILED: NON EXISTENT CUSTOMER OR MENU
+REMOVE_FROM_CART SUCCESS: Honda Scoopy N1234AZ QUANTITY IS DECREMENTED
+REMOVE_FROM_CART SUCCESS: Toyota Agya N34928M IS REMOVED
+REMOVE_FROM_CART SUCCESS: Honda Scoopy N1234AZ QUANTITY IS DECREMENTED
+REMOVE_FROM_CART FAILED: NON EXISTENT CUSTOMER OR MENU
+APPLY_PROMO SUCCESS: CB50
+APPLY_PROMO FAILED: DISC20 
+APPLY_PROMO FAILED: CB30 IS EXPIRED
+TOPUP SUCCESS: Lena 1000000 => 2000000
+TOPUP SUCCESS: Ani 1000000 => 2000000
+TOPUP FAILED: NON EXISTENT CUSTOMER
+Kode Pemesan : A001
+Nama : Ani
+ No | Menu                      | Dur. | Subtotal 
+=================================================
+  1 | Honda Beat N2324AA        |    2 |   200000 
+      2024/02/15 - 2024/02/17
+  2 | Honda Scoopy N1234AZ      |    3 |   375000 
+      2024/02/15 - 2024/02/18
+=================================================
+Sub Total                       :         575.000
+=================================================
+PROMO: CB50                     :         150.000
+Total                           :         575.000
+Saldo                           :       2.000.000
+CHECK_OUT SUCCESS: A001 Ani
+CHECK_OUT FAILED: NO ACTIVE ORDER ON CUSTOMER
+CHECK_OUT FAILED: NON EXISTENT CUSTOMER
+Kode Pemesan : A001
+Nama : Ani
+Nomor Pesanan: 1
+Tanggal Pesanan: 27 Mei 2024
+ No | Menu                      | Dur. | Subtotal 
+=================================================
+  1 | Honda Beat N2324AA        |    2 |   200000 
+      2024/02/15 - 2024/02/17
+  2 | Honda Scoopy N1234AZ      |    3 |   375000 
+      2024/02/15 - 2024/02/18
+=================================================
+Sub Total                       :         575.000
+=================================================
+PROMO: CB50                     :         150.000
+Total                           :         575.000
+Saldo                           :       1.575.000
+Kode Pemesan: A001
+Nama: Ani
+Saldo: 1575000
+  No| No. Pesanan | Motor | Mobil | Subtotal | PROMO   
+====================================================
+   1|           1 |     2 |     0 |   575000 | CB50    
+====================================================

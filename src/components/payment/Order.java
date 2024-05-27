@@ -7,168 +7,213 @@
 
 package components.payment;
 
-import java.time.LocalDateTime;
+import java.util.*;
+import java.text.NumberFormat;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 import components.car.*;
 import components.user.*;
-
-import java.time.Duration;
+import utils.Converter;
 
 public class Order {
     private static int counter;
+    private int orderID;
     private LocalDate invoiceDate;
     private User renter;
-    private int orderID;
-    private Vehicle rentedVehicle;
-    private int rentDuration;
-    private LocalDate rentStartDate;
-    private LocalDate rentEndDate;
-    private double shippingFee;
-    private double cashBack;
-    private double totalDiscount;
+    private ArrayList<OrderItem> orderItems;
     private OrderStatus status;
-    private double subtotal;
+    private Promotion appliedPromo;
+    private long discount;
+    private long cashback;
 
-    public double getSubtotal() {
-        return subtotal;
-    }
-
-    public Order(Vehicle rentedVehicle, int rentDuration, User renter) {
-        this.rentedVehicle = rentedVehicle;
-        this.rentDuration = rentDuration;
+    public Order(User renter) {
         this.renter = renter;
-        this.shippingFee = rentDuration * 100_000;
-        
-        this.invoiceDate = LocalDate.now();
-        this.orderID = counter;
-        counter++;
-        this.rentEndDate = this.rentStartDate.plusDays(rentDuration);
+        this.orderItems = new ArrayList<>();
+        this.status = OrderStatus.UNPAID;
     }
 
-    public void setRentStartDate(String formattedDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        LocalDate proposedDate = LocalDate.parse(formattedDate, formatter);
-        LocalDate currentDate = LocalDate.now();
-
-        if (proposedDate.isAfter(currentDate)) {
-            this.rentStartDate = proposedDate;
-        } else {
-            System.out.println("Error! The rent start date can't be before current date!");
+    public boolean addVehicle(Vehicle rentedVehicle, LocalDate startDate, int duration) {
+        if (contains(rentedVehicle.getVehicleID())) {
+            // Will return false if the vehicle is already there
+            return false;
         }
+
+        orderItems.add(new OrderItem(rentedVehicle, startDate, duration));
+        return true;
     }
 
-    public String getRentStartDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        return this.rentStartDate.format(formatter);
-    }
-    
-    public String getRentEndDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        return this.rentEndDate.format(formatter);
+    public boolean removeVehicle(Vehicle rentedVehicle) {
+        // Check if the item is in the cart
+        OrderItem removedVehicle = search(rentedVehicle.getVehicleID());
+        if (removedVehicle == null) {
+            return false;
+        }
+
+        orderItems.remove(removedVehicle);
+        return true;
     }
 
-    public String getInvoiceDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        return this.invoiceDate.format(formatter);
+    public int incrVehicle(String rentedVehicleID, int duration) {
+        OrderItem rentedVehicle = search(rentedVehicleID);
+        if (rentedVehicle != null) {
+            rentedVehicle.incrDuration(duration);
+            return rentedVehicle.getRentDuration();
+        }
+
+        return -1;
     }
 
-    public Car getRentedVehicle() {
-        return this.rentedVehicle;
+    public int decrVehicle(String rentedVehicleID, int duration) {
+        OrderItem rentedVehicle = search(rentedVehicleID);
+        if (rentedVehicle != null) {
+            rentedVehicle.decrDuration(duration);
+            return rentedVehicle.getRentDuration();
+        }
+
+        return -1;
     }
 
-    public int getRentDuration() {
-        return this.rentDuration;
+    public long calculateSubTotal() {
+        long total = 0;
+        for (OrderItem item : orderItems) {
+            if (item != null) {
+                total += item.getTotal();
+            }
+        }
+        return total;
     }
 
-    public void setRentDuration(int dur) {
-       this.rentDuration = dur;
+    public long calculateTotal() {
+        return calculateSubTotal() + getShippingFee();
+    }
+
+    public long getShippingFee() {
+        // TODO: Implements shipping fee
+        return 0;
+    }
+
+    public boolean checkOut() {
+        // Check if the balance is sufficient
+        long toPay = (calculateTotal() - this.discount);
+        if (this.renter.getBalance() -  toPay < 0) return false;
+
+        // Create order ID
+        counter++;
+        this.orderID = counter;
+
+        // Create invoice date
+        this.invoiceDate = LocalDate.now();
+
+        // Decrease user balance and increase user balance if there's cashback
+        this.renter.decrBalance(calculateTotal() - this.discount);
+        if (this.cashback != 0) this.renter.incrBalance(this.cashback);
+        this.status = OrderStatus.SUCCESSFUL;
+        return true;
+    }
+
+    public void printDetails() {
+        System.out.printf("Kode Pemesan : %s\n", this.renter.getUserID());
+        System.out.printf("Nama : %s\n", this.renter.getFullName());
+        if (this.status == OrderStatus.SUCCESSFUL) {
+            System.out.println("Nomor Pesanan: " + getOrderID());
+            System.out.println("Tanggal Pesanan: " + getFormattedInvoiceDate());
+        }
+        System.out.printf("%3s | %-25s | %4s | %8s \n", "No", "Menu", "Dur.", "Subtotal");
+        System.out.println("=================================================");
+        
+        int counter = 1;
+        orderItems.sort(Comparator.comparing(OrderItem::getRentStartDate).thenComparing(OrderItem::getTotal));
+        for (OrderItem item : orderItems) {
+            if (item != null) {
+                Vehicle vehicle = item.vehicle;
+                System.out.printf(
+                    "%3d | %-25s | %4d | %8s \n", 
+                    counter, 
+                    (vehicle.getVehicleName() + " " + vehicle.getLicenseNumber()), 
+                    item.getRentDuration(),
+                    item.getTotal()
+                );
+                
+                System.out.printf("      %s - %s\n", Converter.LocalDateToString(item.rentStartDate), Converter.LocalDateToString(item.rentEndDate));
+                counter++;
+            }
+        }
+
+        System.out.println("=================================================");
+        NumberFormat nf = NumberFormat.getInstance(Locale.GERMANY);
+        System.out.printf("%-32s: %15s\n", "Sub Total", nf.format(calculateSubTotal()));
+        if (this.appliedPromo != null && this.appliedPromo instanceof RegularDiscount) {
+            System.out.printf("%-32s: %15s\n", ("PROMO: " + this.appliedPromo.getPromoCode()), nf.format(-1*this.discount));
+        }
+        System.out.println("=================================================");
+        if (this.appliedPromo != null && this.appliedPromo instanceof Cashback) {
+            System.out.printf("%-32s: %15s\n", ("PROMO: " + this.appliedPromo.getPromoCode()), nf.format(this.cashback));
+        }
+        System.out.printf("%-32s: %15s\n", "Total", nf.format(calculateTotal()));
+        System.out.printf("%-32s: %15s\n", "Saldo", nf.format(this.renter.getBalance()));
+    }
+
+    public boolean applyPromo(Promotion promo) {
+        // Check eligibility {
+        if (!(this.renter instanceof Member && promo.isCustomerEligible((Member) this.renter) && promo.isMinimumPriceEligible(this))) {
+            return false;
+        }
+
+        this.appliedPromo = promo;
+        this.cashback = promo.totalCashback(this) > promo.getMaxPromoVal() ? promo.getMaxPromoVal() : promo.totalCashback(this);
+        this.discount = promo.totalDiscount(this) > promo.getMaxPromoVal() ? promo.getMaxPromoVal() : promo.totalDiscount(this);
+        return true;
+    }
+
+    public long getDiscountVal() {
+        return this.discount;
+    }
+
+    public boolean contains(String vehicleID) {
+        return search(vehicleID) != null;
+    }
+
+    public int getDuration(String vehicleID) {
+        return search(vehicleID).getRentDuration();
     }
 
     public int getOrderID() {
         return this.orderID;
     }
 
-    public double getShippingFee() {
-        return shippingFee;
+    public String getFormattedInvoiceDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy", Locale.forLanguageTag("id"));
+        return this.invoiceDate.format(formatter);
     }
 
-    public String getCarName() {
-        return rentedVehicle.model;
+    public Promotion getAppliedPromo() {
+        return appliedPromo;
     }
 
-    public double calculateDuration() {
-        long days = ChronoUnit.DAYS.between(rentStartDate, rentEndDate);
-        return days * 24; // converting days to hours
+    public int getCarNumber() {
+        int counter = 0;
+        for (OrderItem item : orderItems) {
+            if (item.vehicle instanceof Car) counter++;
+        }
+        return counter;
     }
 
-    public double calculatePrice() {
-        return this.rentedVehicle.getRentalFee() * (calculateDuration() / 6); // assuming the rental fee is per 6 hours
+    public int getBikeNumber() {
+        int counter = 0;
+        for (OrderItem item : orderItems) {
+            if (item.vehicle instanceof Bike) counter++;
+        }
+        return counter;
     }
 
-    public boolean checkOut() {
-        if (this.totalDiscount == 0) this.subtotal = calculatePrice() + shippingFee;
-        this.status = OrderStatus.UNPAID;
-        return true;
-    }
-
-    public void printDetails() {
-        System.out.println("---- Invoice details ----");
-        System.out.println("Invoice date  :" + getInvoiceDate());
-        if (status == OrderStatus.SUCCESSFUL)
-            System.out.println("Invoice ID   : -");
-
-        System.out.println("---- Car Details ---- ");
-        System.out.println("Car brand     : " + rentedVehicle.brand);
-        System.out.println("Car model     : " + rentedVehicle.model);
-        System.out.println("Car capacity  : " + rentedVehicle.getCapacity());
-        System.out.println("Rental fee    : Rp" + rentedVehicle.getRentalFee() + " /6hr");
-        System.out.println("Car quantity  : " + rentDuration);
-
-        System.out.println("---- Rent details ----");
-        System.out.println("Start date    : " + getRentStartDate());
-        System.out.println("End date      : " + getRentEndDate());
-        System.out.printf("Duration (hr) : %d\n", (int) calculateDuration());
-
-        System.out.println("---- Billing details ----");
-        System.out.printf("Delivery fee  : Rp%d\n", (long) shippingFee);
-        System.out.printf("Rent bill     : Rp%d\n", (long) calculatePrice());
-        if (this.subtotal != 0)
-            System.out.printf("Total         : Rp%d\n", (long) subtotal);
-        if (this.totalDiscount != 0)
-            System.out.printf("After promo   : Rp%d\n", (long) subtotal);
-            
-        if (this.cashBack != 0)
-            System.out.printf("Cashback      : Rp%d\n", (long) cashBack);
-
-        System.out.println();
-    }
-
-    public boolean applyPromo(Promotion promo) {
-        if (promo == null) return false;
-        boolean result = false;
-
-        if (this.renter instanceof Member) {
-            Member member = (Member) renter;
-            if (promo.isCustomerEligible(member) && promo.isMinimumPriceEligible(this)) {
-                this.totalDiscount += promo.totalDiscount();
-                this.cashBack += promo.totalCashback();
-                result = true;
-            }
-
-            if (promo.isShippingDiscountEligible(this)) {
-                this.shippingFee -= promo.calculateShippingDiscount();
-                result = true;
+    private OrderItem search(String vehicleID) {
+        for (OrderItem item : orderItems) {
+            if (item.itemID.equals(vehicleID)) {
+                return item;
             }
         }
 
-        this.subtotal = calculatePrice() - totalDiscount;
-
-        return result;
-    }
-
-    public boolean pay() {
-        this.status = OrderStatus.SUCCESSFUL;
-        return true;
+        return null;
     }
 }

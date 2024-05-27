@@ -40,7 +40,7 @@ public class Cashback extends Promotion {
 
     @Override
     public boolean isMinimumPriceEligible(Order order) {
-        if (order.calculatePrice() >= super.getMinTranscTreshold()) {
+        if (order.calculateSubTotal() >= super.getMinTranscTreshold()) {
             return true;
         }
         return false;
@@ -54,7 +54,7 @@ public class Cashback extends Promotion {
     @Override
     public long totalCashback(Order order) {
         if (isMinimumPriceEligible(order)) {
-            double cashback = order.calculatePrice() * super.getPercentage();
+            double cashback = order.calculateSubTotal() * super.getPercentage();
             return (long) cashback;
         } else {
             return 0;
